@@ -12,7 +12,6 @@
 \usepackage{bookmark}
 \usepackage{svg}
 \usepackage{amsmath}
-\usepackage{amssymb} 
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{textcomp}
@@ -22,12 +21,52 @@
 \usepackage{float}
 \usepackage{stfloats}
 \usepackage{authblk}
-
-\usepackage[colorlinks]{hyperref} %by islam
-\usepackage[printonlyused,withpage]{acronym} %by islam
-
+\usepackage{acro}%by islam
 \usepackage[margin=3cm]{geometry}
 \usepackage{algorithm2e}
+
+
+\usepackage{nomencl}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\makenomenclature
+\hypersetup{
+    colorlinks=true,
+    urlcolor=blue,
+}
+%% This will add the subgroups
+%----------------------------------------------
+\usepackage{etoolbox}
+\renewcommand\nomgroup[1]{%
+  \item[\bfseries
+  \ifstrequal{#1}{A}{Physics Constants}{%
+  \ifstrequal{#1}{B}{Number Sets}{%
+  \ifstrequal{#1}{C}{Other Symbols}{}}}%
+]}
+%----------------------------------------------
+
+%% This will add the units
+%----------------------------------------------
+\newcommand{\nomunit}[1]{%
+\renewcommand{\nomentryend}{\hspace*{\fill}#1}}
+%----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \title{Space Systems Engineering Assignment 3}
 \author[1]{Mohamed Fawzi}
@@ -40,6 +79,7 @@
 
 
 
+\input{acro_list}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -62,7 +102,7 @@ The thermal factors that affect a satellite
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \indent
 \subsection{Celestial Mechanics}
-hi\acr{IFR}
+hi \ac{IFR}
 \subsection{Thermal Models}
 Albedo
 Solar Radiation
@@ -126,14 +166,30 @@ FOR EACH MATERIAL (EXCEPT ANIMATIONS)
 \newpage
 \section{Conclusion} MSF
 \indent
+%%%%%%%%%%
+%%%%%%%%%%%
+%%%%%%%%%%%%
+\section{Nomenclature}
+\noindent This is an example to show how the \texttt{nomencl} package works, with units typeset via the \texttt{siunitx} package. \href{https://www.nist.gov/pml/fundamental-physical-constants}{NIST} was referenced to provide the values of physical constants, and their corresponding units---links are provided via the \texttt{hyperref} package:
 
- 
-\section{List of Acronyms}
-\begin{acronym}
- \acro{IFR}{Inertial Frame of Reference}
-\end{acronym}
+\nomenclature[A, 02]{\(c\)}{\href{https://physics.nist.gov/cgi-bin/cuu/Value?c}
+{Speed of light in a vacuum}
+\nomunit{\SI{299792458}{\meter\per\second}}}
+\nomenclature[A, 03]{\(h\)}{\href{https://physics.nist.gov/cgi-bin/cuu/Value?h}
+{Planck constant}
+\nomunit{\SI[group-digits=false]{6.62607015e-34}{\joule\per\hertz}}}
+\nomenclature[A, 01]{\(G\)}{\href{https://physics.nist.gov/cgi-bin/cuu/Value?bg}
+{Gravitational constant} 
+\nomunit{\SI[group-digits=false]{6.67430e-11}{\meter\cubed\per\kilogram\per\second\squared}}}
+\nomenclature[B, 03]{\(\mathbb{R}\)}{Real numbers}
+\nomenclature[B, 02]{\(\mathbb{C}\)}{Complex numbers}
+\nomenclature[B, 01]{\(\mathbb{H}\)}{Quaternions}
+\nomenclature[C]{\(V\)}{Constant volume}
+\nomenclature[C]{\(\rho\)}{Friction index}
 
-
+\printnomenclature
+%%%%%%%%%%%%%
+\printacronyms
 
 \bibliography{References}
 \end{document}

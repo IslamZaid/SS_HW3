@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+
+\begin{document}
+
+\begin{figure} 
+\centering
+\begin{tikzpicture}
+% draw rectangle node
+	\node[draw,
+		minimum width=2cm,
+		minimum height=1cm,
+		align=center,
+		text width=2cm] at (0,0) {Time\\ $t$};
+	\node[draw,
+		minimum width=2cm,
+		minimum height=1cm,
+		align=center,
+		text width=2cm] at (3,0) {M};
+	\node[draw,
+		minimum width=2cm,
+		minimum height=1cm,
+		align=center,
+		text width=2cm] at (6,0) {E};
+	\node[draw,
+		minimum width=2cm,
+		minimum height=1cm,
+		align=center,
+		text width=2cm] at (9,0) {$\theta$};
+
+    \draw[-latex] (1,0) -- (2,0);
+    \draw[-latex] (4,0) -- (5,0);
+    \draw[-latex] (7,0) -- (8,0);
+\end{tikzpicture}
+\caption{Your caption here}
+\label{fig:yourlabel}
+\end{figure}
+
+\end{document}

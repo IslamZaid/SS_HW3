@@ -346,7 +346,7 @@ for k = timeloop
     zlim([-2e7 1e7])
 
 %     f.FontSize = 16;
-    exportgraphics(f,'Animate.gif','Append',true);
+    exportgraphics(f,'images/Animate.gif','Append',true);
 
     k
 end
@@ -365,7 +365,7 @@ for i = timeloop
     xlabel("Time (hours)")
     ylabel("Distance between sun and earth (m)")
     
-    exportgraphics(f,'temp.gif','Append',true);
+    exportgraphics(f,'images/temp.gif','Append',true);
 end
 
 
@@ -423,7 +423,7 @@ for k = timeloop
     zlim([-2e7 1e7])
 
 %     f.FontSize = 16;
-    exportgraphics(f,'Animate_year.gif','Append',true);
+    exportgraphics(f,'images/Animate_year.gif','Append',true);
 
     k
 end
@@ -444,7 +444,7 @@ for i = 1 :1000: numsteps
     xlabel("Time (years)")
     ylabel("Distance between sun and earth (m)")
     
-    exportgraphics(f,'r_earth.gif','Append',true);
+    exportgraphics(f,'images/r_earth.gif','Append',true);
 end
 
 

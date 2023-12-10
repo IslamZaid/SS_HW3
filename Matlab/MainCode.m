@@ -407,14 +407,15 @@ subplot(1,3,[1,2])
 plot(Temp(1:60*24), 'LineWidth',2)
 grid on 
 grid minor 
-title("Temperature variation over 24 hours")
+title("Temperature over 24 hours")
 xlabel("Time (hours)")
 ylabel("Temperature (K)")
 xticks(0:6*60:24*60)
 xticklabels(0:6:24) 
  subplot(1,3,3) 
 plot(Temp(0*60+1:60*2+1), 'LineWidth',2)
-title("Temperature variation over 2 hours")
+title("Temperature over 2 hours")
+xlabel("Time (hours)")
 xticks(0:0.5*60:2*60)
 xticklabels(0:0.5:2)
 grid on 
@@ -425,30 +426,32 @@ fontsize(gcf,16,"points")
 exportgraphics(f,'images/temp_time.png', Resolution=1200);
 %%
  
-f=figure('Position', [0, 0, 600, 300]);  %'Position', [0, 0, 1500, 1200],
-period = 0*24*60+1 : 1*24*60;
-tickss = 0:6*60:24*60;
-ticksslabels = 0:6:24;
-
-plot(Q_A_mat(period), 'LineWidth',2)
-hold on 
-plot(Q_p_mat(period), 'LineWidth',2)
-plot(Q_sun_mat(period), 'LineWidth',2)
+f=figure('Position', [0, 0, 1500, 500]);  %'Position', [0, 0, 1500, 1200],
+subplot(1,3,[1,2])
+plot(Q_A_mat(1:60*24), 'LineWidth',2)
+hold on
+plot(Q_sun_mat(1:60*24), 'LineWidth',2)
+plot(Q_p_mat(1:60*24), 'LineWidth',2)
 grid on 
 grid minor 
-title("Temperature variation over 24 hours")
+title("Radiation power over 24 hours")
+legend(["Albedo","Sun","Planetary"])
 xlabel("Time (hours)")
-ylabel("Temperature (K)")
-xticks(tickss)
-xticklabels(ticksslabels)
+ylabel("Radiation power (w)")
+xticks(0:6*60:24*60)
+xticklabels(0:6:24)  
 
-% ax=axes(Position=[0.5 0.25 0.4 0.4 ]);
-% plot(Temp(0*60+1:60*2+1), 'LineWidth',2)
-% xticks(0:0.5*60:2*60)
-% xticklabels(0:0.5:2)
-% grid on 
-% grid minor 
-
+subplot(1,3,3) 
+plot(Q_A_mat(0*60+1:60*2+1), 'LineWidth',2)
+hold on
+plot(Q_sun_mat(0*60+1:60*2+1), 'LineWidth',2)
+plot(Q_p_mat(0*60+1:60*2+1), 'LineWidth',2)
+title("Radiation power over 2 hours")
+xlabel("Time (hours)")
+xticks(0:0.5*60:2*60)
+xticklabels(0:0.5:2)
+grid on 
+grid minor 
 fontsize(gcf,16,"points")
 
 exportgraphics(f,'images/QQQ_time.png', Resolution=1200);

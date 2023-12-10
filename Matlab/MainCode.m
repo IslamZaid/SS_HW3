@@ -407,14 +407,14 @@ subplot(1,3,[1,2])
 plot(Temp(1:60*24), 'LineWidth',2)
 grid on 
 grid minor 
-title("Temperature over 24 hours")
+title("Temperature Variation")
 xlabel("Time (hours)")
 ylabel("Temperature (K)")
 xticks(0:6*60:24*60)
 xticklabels(0:6:24) 
  subplot(1,3,3) 
 plot(Temp(0*60+1:60*2+1), 'LineWidth',2)
-title("Temperature over 2 hours")
+title("Temperature - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:2*60)
 xticklabels(0:0.5:2)
@@ -434,7 +434,7 @@ plot(Q_sun_mat(1:60*24), 'LineWidth',2)
 plot(Q_p_mat(1:60*24), 'LineWidth',2)
 grid on 
 grid minor 
-title("Radiation power over 24 hours")
+title("Radiation modes")
 legend(["Albedo","Sun","Planetary"])
 xlabel("Time (hours)")
 ylabel("Radiation power (w)")
@@ -446,7 +446,7 @@ plot(Q_A_mat(0*60+1:60*2+1), 'LineWidth',2)
 hold on
 plot(Q_sun_mat(0*60+1:60*2+1), 'LineWidth',2)
 plot(Q_p_mat(0*60+1:60*2+1), 'LineWidth',2)
-title("Radiation power over 2 hours")
+title("Radiation - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:2*60)
 xticklabels(0:0.5:2)
@@ -455,6 +455,50 @@ grid minor
 fontsize(gcf,16,"points")
 
 exportgraphics(f,'images/QQQ_time.png', Resolution=1200);
+
+
+%%
+ Q_tot = Q_A_mat+Q_sun_mat+Q_p_mat;
+f=figure('Position', [0, 0, 1500, 500]);  %'Position', [0, 0, 1500, 1200],
+subplot(1,3,[1,2])
+plot(Q_tot(1:60*24), 'LineWidth',2)
+grid on 
+grid minor 
+title("Total incident radiation")
+xlabel("Time (hours)")
+ylabel("Radiation power (w)")
+xticks(0:6*60:24*60)
+xticklabels(0:6:24) 
+ subplot(1,3,3) 
+plot(Q_tot(0*60+1:60*2+1), 'LineWidth',2)
+title("Total radiation - one cycle")
+xlabel("Time (hours)")
+xticks(0:0.5*60:2*60)
+xticklabels(0:0.5:2)
+grid on 
+grid minor 
+fontsize(gcf,16,"points")
+
+
+exportgraphics(f,'images/Q_time.png', Resolution=1200);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %% Initialize gif
 if size(Q_mat,2) ~= size(Q_mat,3)

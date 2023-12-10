@@ -782,29 +782,43 @@ A convergence study is performed to monitor the simulation performance versus th
 
 \paragraph{Direct solar radiation on the earth surface,} to test the code performance, each component of the code is tested separately. Thus, the direct radiation from the sun to the earth is computed for each element on the earth surface. Figure \ref{fig:solar-rad-on-earth} shows the incident radiation on the earth surface which depends on how far is this point from the sun. The change in the distance (d) of each element on the earth from the sun is very small. Thus, it is expected to get very small differences in the incident radiation power as evident from the figure where the maximum value and the minimum value are\textcolor{red}{ X , and Y} respectively. 
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width = 0.6\textwidth]{Matlab/Sensitivity/fig_0_180.png}
-    \caption{Incident radiation on the earth surface}
-    \label{fig:solar-rad-on-earth}
-\end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width = 0.6\textwidth]{Matlab/images/inc_sun_rad.png}
+%     \caption{Incident radiation on the earth surface}
+%     \label{fig:solar-rad-on-earth}
+% \end{figure}
 
 
 The incident solar radiation on the earth is reflected to the universe, portion of this radiation is intercepted by the satellite which represents the albedo radiation. Figure \ref{fig:albedo} elucidates the contribution of each element in the earth surface to the satellite absorbed radiation. It's evident from the figure that the angle between the two surfaces directly influence the amount of contribution. Furthermore, the half side of the earth that is far from the sun does not contribute to the albedo radiation absolutely which provides a good validation case for our simulation framework. 
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width = 0.6\textwidth]{Matlab/images/albedo_elements.png}
-    \caption{Earth surface elements contributions to albedo}
-    \label{fig:albedo}
-\end{figure}
-
-\paragraph{Temperature variation wrt periodic time of earth and satellite,}
-Figure \ref{fig:temp} shows the temperature variation over one orbital period time of satellite. The satellite temperature varies according to the time periodically and osciolates between minimum value of X and maximum value of Y.  
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width = 0.6\textwidth]{Matlab/images/albedo_elements.png}
+%     \caption{Earth surface elements contributions to albedo}
+%     \label{fig:albedo}
+% \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics{Matlab/Sensitivity/fig_Q_sensitivity_0_180.png}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Matlab/images/inc_sun_rad.png}
+        \caption{}
+        \label{fig:solar-rad-on-earth}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Matlab/images/albedo_elements.png}
+        \caption{}
+        \label{fig:albedo}
+    \end{subfigure}
+    \caption{(a) Earth surface elements contributions to albedo, (b) Earth surface elements contributions to albedo}
+\end{figure}
+\paragraph{Temperature variation wrt time,}
+Figure \ref{fig:temp} shows the temperature variation over 24-hour time with a scope of the behavior over around 2-hour time (satellite periodic time). The satellite temperature varies according to the time periodically and osciolates between minimum value of X and maximum value of Y.  
+
+\begin{figure}
+    \centering
+    \includegraphics{Matlab/tem}
     \caption{Caption}
     \label{fig:temp}
 \end{figure}

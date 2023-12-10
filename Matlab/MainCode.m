@@ -424,7 +424,7 @@ exportgraphics(f,'images/temp_time.png', Resolution=1200);
 
 %%
  
-f=figure('Position', [0, 0, 1200, 600]);  %'Position', [0, 0, 1500, 1200],
+f=figure('Position', [0, 0, 800, 400]);  %'Position', [0, 0, 1500, 1200],
 period = 0*24*60+1 : 1*24*60;
 tickss = 0:6*60:24*60;
 ticksslabels = 0:6:24;

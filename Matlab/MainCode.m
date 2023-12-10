@@ -490,16 +490,6 @@ exportgraphics(f,'images/Q_time.png', Resolution=1200);
 
 
 
-
-
-
-
-
-
-
-
-
-
 %% Initialize gif
 if size(Q_mat,2) ~= size(Q_mat,3)
     Q_mat(:,:,end+1) = Q_mat(:,:,end);

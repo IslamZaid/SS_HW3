@@ -326,7 +326,7 @@ The \ac{IFR} is fixed with respect to the sun, where the origin of the axes is t
 
  
  
-\paragraph{Position vector of the earth wrt the sun ($\vec{V_1(\psi_1)}$),}
+\paragraph{Position vector of the earth w.r.t the sun ($\vec{V_1(\psi_1)}$),}
 
 the vector from the sun to the earth is $\vec{V}_{1}$, which consists of three components in $X, Y, \text{and } Z$ directions. %the initial position of the satellite at $t_0 = 0$ is represented by 
 \begin{equation}\label{eq:01}
@@ -396,7 +396,7 @@ By substitution from Equation \ref{eq:01}, and Equation \ref{eq:04} into Equatio
             \end{bmatrix}
 \end{gather}
 
-\paragraph{Position vector of the satellite wrt the earth ($\vec{V_2(t)}$),}
+\paragraph{Position vector of the satellite w.r.t the earth ($\vec{V_2(t)}$),}
 
 
 Similarly, the satellite is rotating around the earth according to the same governing equations. Considering that the satellite is rotating in a circular path. Then, $r_2(t) = r_2$. Thus,
@@ -416,7 +416,7 @@ Similarly, the satellite is rotating around the earth according to the same gove
              0             
             \end{bmatrix}
 \end{equation}
-\paragraph{Position vector of the satellite wrt the sun ($\vec{V_3(t)}$),}
+\paragraph{Position vector of the satellite w.r.t the sun ($\vec{V_3(t)}$),}
 
 It is evident from geometry of Figure \ref{fig:ifr} that,
 \begin{equation}
@@ -639,7 +639,7 @@ The portion of solar radiation that bounces off a planet's surface and/or atmosp
     \delta Q_{r_{ij}} = I_{i0} dA_i\cos{\phi_i}\times\frac{dA_j \cos{\phi_j}}{d^2}
 \end{equation}
 
-Each place on the earth surface has different geometrical relations wrt the sun and satellite. Thus it's mandatory to discretize the earth into a mesh grid to be able to numerically integrate over the earth surface to compute the total absorbed radiation by albedo mode. the following algorithm is developed to compute the incident radiation from each element on the earth surface to the satellite, and sum all the earths elements contributions to get the total albedo radiation as described in Algorithm \ref{alg:01}.
+Each place on the earth surface has different geometrical relations w.r.t the sun and satellite. Thus it's mandatory to discretize the earth into a mesh grid to be able to numerically integrate over the earth surface to compute the total absorbed radiation by albedo mode. the following algorithm is developed to compute the incident radiation from each element on the earth surface to the satellite, and sum all the earths elements contributions to get the total albedo radiation as described in Algorithm \ref{alg:01}.
 
 
 
@@ -782,24 +782,8 @@ A convergence study is performed to monitor the simulation performance versus th
 
 \paragraph{Direct solar radiation on the earth surface,} to test the code performance, each component of the code is tested separately. Thus, the direct radiation from the sun to the earth is computed for each element on the earth surface. Figure \ref{fig:solar-rad-on-earth} shows the incident radiation on the earth surface which depends on how far is this point from the sun. The change in the distance (d) of each element on the earth from the sun is very small. Thus, it is expected to get very small differences in the incident radiation power as evident from the figure where the maximum value and the minimum value are\textcolor{red}{ X , and Y} respectively. 
 
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width = 0.6\textwidth]{Matlab/images/inc_sun_rad.png}
-%     \caption{Incident radiation on the earth surface}
-%     \label{fig:solar-rad-on-earth}
-% \end{figure}
-
-
-The incident solar radiation on the earth is reflected to the universe, portion of this radiation is intercepted by the satellite which represents the albedo radiation. Figure \ref{fig:albedo} elucidates the contribution of each element in the earth surface to the satellite absorbed radiation. It's evident from the figure that the angle between the two surfaces directly influence the amount of contribution. Furthermore, the half side of the earth that is far from the sun does not contribute to the albedo radiation absolutely which provides a good validation case for our simulation framework. 
-
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width = 0.6\textwidth]{Matlab/images/albedo_elements.png}
-%     \caption{Earth surface elements contributions to albedo}
-%     \label{fig:albedo}
-% \end{figure}
-
-\begin{figure}
+ 
+\begin{figure}[h]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{Matlab/images/inc_sun_rad.png}
@@ -813,18 +797,25 @@ The incident solar radiation on the earth is reflected to the universe, portion 
     \end{subfigure}
     \caption{(a) Earth surface elements contributions to albedo, (b) Earth surface elements contributions to albedo}
 \end{figure}
-\paragraph{Temperature variation wrt time,}
-Figure \ref{fig:temp} shows the temperature variation over 24-hour time with a scope of the behavior over around 2-hour time (satellite periodic time). The satellite temperature varies according to the time periodically and osciolates between minimum value of X and maximum value of Y.  
 
-\begin{figure}
+
+The incident solar radiation on the earth is reflected to the universe, portion of this radiation is intercepted by the satellite which represents the albedo radiation. Figure \ref{fig:albedo} elucidates the contribution of each element in the earth surface to the satellite absorbed radiation. It's evident from the figure that the angle between the two surfaces directly influence the amount of contribution. Furthermore, the half side of the earth that is far from the sun does not contribute to the albedo radiation absolutely which provides a good validation case for our simulation framework. 
+
+ \newpage
+
+\paragraph{Temperature variation w.r.t time,}
+Figure \ref{fig:temptime} shows the temperature variation over 24-hour time with a scope of the behavior over around 2-hour time (satellite periodic time). The satellite temperature varies according to the time periodically and osciolates between minimum value of \textcolor{red}{X} and maximum value of Y.  
+
+\begin{figure}[h]
     \centering
-    \includegraphics{Matlab/tem}
-    \caption{Caption}
-    \label{fig:temp}
+    \includegraphics[width=0.6\textwidth]{Matlab/images/temp_time.png}
+    \caption{Temperature variation over 24-hour period of time}
+    \label{fig:temptime}
 \end{figure}
 
 
 
+\paragraph{$Q_{s}$,$Q_{a}$ and $Q_{p}$ variation w.r.t time,}
 
 
 

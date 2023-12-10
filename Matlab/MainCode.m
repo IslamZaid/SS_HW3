@@ -402,7 +402,7 @@ exportgraphics(f,'images/inc_sun_rad.png', Resolution=1200);
 
 %%
  
-f=figure('Position', [0, 0, 1500, 500]);  %'Position', [0, 0, 1500, 1200],
+f=figure('Position', [0, 0, 1500, 450]);  %'Position', [0, 0, 1500, 1200],
 subplot(1,3,[1,2])
 plot(Temp(1:60*24), 'LineWidth',2)
 grid on 
@@ -426,7 +426,7 @@ fontsize(gcf,16,"points")
 exportgraphics(f,'images/temp_time.png', Resolution=1200);
 %%
  
-f=figure('Position', [0, 0, 1500, 500]);  %'Position', [0, 0, 1500, 1200],
+f=figure('Position', [0, 0, 1500, 450]);  %'Position', [0, 0, 1500, 1200],
 subplot(1,3,[1,2])
 plot(Q_A_mat(1:60*24), 'LineWidth',2)
 hold on
@@ -459,7 +459,7 @@ exportgraphics(f,'images/QQQ_time.png', Resolution=1200);
 
 %%
  Q_tot = Q_A_mat+Q_sun_mat+Q_p_mat;
-f=figure('Position', [0, 0, 1500, 500]);  %'Position', [0, 0, 1500, 1200],
+f=figure('Position', [0, 0, 1500, 450]);  %'Position', [0, 0, 1500, 1200],
 subplot(1,3,[1,2])
 plot(Q_tot(1:60*24), 'LineWidth',2)
 grid on 

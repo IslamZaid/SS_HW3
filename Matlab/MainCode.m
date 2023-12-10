@@ -412,64 +412,45 @@ ylabel("Temperature (K)")
 xticks(0:6*60:24*60)
 xticklabels(0:6:24)
 ax=axes(Position=[0.5 0.25 0.4 0.4 ]);
-plot(Temp(22*60:60*24), 'LineWidth',2)
+plot(Temp(0*60+1:60*2+1), 'LineWidth',2)
 xticks(0:0.5*60:2*60)
 xticklabels(0:0.5:2)
+grid on 
+grid minor 
+fontsize(gcf,16,"points")
+
+exportgraphics(f,'images/temp_time.png', Resolution=1200);
+
+
+%%
+ 
+f=figure('Position', [0, 0, 1200, 600]);  %'Position', [0, 0, 1500, 1200],
+period = 0*24*60+1 : 1*24*60;
+tickss = 0:6*60:24*60;
+ticksslabels = 0:6:24;
+
+plot(Q_A_mat(period), 'LineWidth',2)
+hold on 
+plot(Q_p_mat(period), 'LineWidth',2)
+plot(Q_sun_mat(period), 'LineWidth',2)
+grid on 
+grid minor 
+title("Temperature variation over 24 hours")
+xlabel("Time (hours)")
+ylabel("Temperature (K)")
+xticks(tickss)
+xticklabels(ticksslabels)
+
+% ax=axes(Position=[0.5 0.25 0.4 0.4 ]);
+% plot(Temp(0*60+1:60*2+1), 'LineWidth',2)
+% xticks(0:0.5*60:2*60)
+% xticklabels(0:0.5:2)
+% grid on 
+% grid minor 
 
 fontsize(gcf,16,"points")
 
-% r_eartosun = a;
-% f_sun = 1e+3;
-% b_ear_sun = theta_earth_mat(k);
-% b_sat_ear = theta_sat_mat(k);
-% pe = R_ear_sun(r_eartosun, b_ear_sun)/f_sun/2.5;
-% psat = R_sat_ear(b_sat_ear); 
-% 
-% quiver3(0,0,0,pe(1), pe(2), pe(3))
-% hold on
-% quiver3(pe(1),pe(2),pe(3),psat(1), psat(2), psat(3))
-% % sun
-% r_sun = 7e+9/f_sun;
-% [x,y,z] = sphere;
-% x = r_sun*x; y = r_sun*y; z = r_sun*z;
-% surf(x,y,z, 10000*ones(size(z)),"EdgeColor","red","LineStyle","-.")
-% % earth
-% x = pe(1)+X; y = pe(2)+Y; z = pe(3)+Z;
-% surf(x,y,z, squeeze(I_mat(k,:,:)), 'EdgeAlpha',0.2)
-% % surf(x,y,z, squeeze(Q_mat(k,:,:)), 'EdgeAlpha',0.2)
-% %satellite
-% pss = pe + psat ;
-% f_sat = 1e+6;
-% n_sat = 10;
-% [x,y,z] = ellipsoid(pss(1), pss(2), pss(3), 1*f_sat,1*f_sat,1*f_sat, n_sat);
-% % x = f_sat * x; y = f_sat* y; z = f_sat*z;
-% sat = surf(x,y,z, zeros(n_sat) );
-% % rotate(sat, [0,0,1],rad2deg(b_sat_ear) )
-% 
-% axis equal
-% view(-20, 45)
-% title("ncident radiation on the earth surface")
-% hold off
-% c=colorbar;
-% c.LineWidth =2 ;
-% c.FontSize = 16 ;
-% caxis([0 max(max(max(I_mat)))]);
-% 
-% xlim([-1e7 8e7])
-% ylim([-1e7 2e7])
-% zlim([-2e7 1e7])
-% axes('position',[.3 .05 .5 .4])
-% box on
-% % earth
-% x = pe(1)+X; y = pe(2)+Y; z = pe(3)+Z;
-% surf(x,y,z, squeeze(I_mat(k,:,:)), 'EdgeAlpha',0.2)
-% % surf(x,y,z, squeeze(Q_mat(k,:,:)), 'EdgeAlpha',0.2)
-% view(-20, 45)
-% axis equal
-
-%f.FontSize = 16;
-exportgraphics(f,'images/temp_time.png', Resolution=1200);
-
+exportgraphics(f,'images/QQQ_time.png', Resolution=1200);
 
 %% Initialize gif
 if size(Q_mat,2) ~= size(Q_mat,3)

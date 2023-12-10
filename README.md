@@ -1,4 +1,4 @@
-# Environmental Fluxes Simulation
+# Simulation of Radiation Power on an Orbiting Satellite 
 
 This repository contains a numerical code for computing the radiative power absorbed by a satellite in orbit around the Earth. The simulation accounts for radiation fluxes from the Sun, terrestrial albedo, and terrestrial thermal radiation. The code is designed to work for a generic orbit with user-specified orbital elements, although a simplified version with zero eccentricity is also acceptable.
 

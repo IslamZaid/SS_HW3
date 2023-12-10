@@ -1,7 +1,29 @@
 clc;
 close all;
 clear all;
- 
+ %% 
+
+e = 0.0167;
+G = 6.6371e-11; % Gravitational Constant in m^3/kg*s^2
+mass_earth = 5.97e24; % in kg
+mu = G*mass_earth; % Standard gravitational parameter in m^3/s^2
+a = 1.49e11;   % m
+h = sqrt( mu * a * (1-e^2) ) ;   % kg.m^2/s
+
+alpha = 0.12; 
+eps = 0.5; 
+ae = alpha/eps;
+sigma = 5.67*10^-8; % m^2/K.w
+
+
+
+b_ear_sun = pi/2;
+% r_ear_sun = 1.496e+11;
+r_sat_ear = 6.371e+6 + 2e+6 ; 
+r_ear = 6.371e+6;
+area_sat = 100;   %(m^2)
+
+
 %% Sphere Model Development
 % Number of nodes
 numNodes = 40;
@@ -12,8 +34,8 @@ X = r_ear * X;
 Y = r_ear * Y;
 Z = r_ear * Z;
 
-% XYZ = 
-centerNodes = zeros([size(X), 4]); % First column for labels, fifth column for lateral surface areas
+
+centerNodes = zeros([size(X), 4]); % First column for labels, forth column for lateral surface areas
 
 Area = zeros(numNodes);
 
@@ -45,18 +67,14 @@ for i = 1 : numNodes
     end
 end
 
-h = surf(X,Y,Z);
-Normal_Vectors = Area.*h.FaceNormals;
+srfc = surf(X,Y,Z);
+Normal_Vectors = Area.*srfc.FaceNormals;
 
 
 
 %% Radiation models
 %% position vectors definition
-b_ear_sun = pi/2;
-% r_ear_sun = 1.496e+11;
-r_sat_ear = 6.371e+6 + 2e+6 ; 
-r_ear = 6.371e+6;
-area_sat = 100;   %(m^2)
+
 R_ear_sun = @(r,beta_e_sun) r * [ cos(beta_e_sun) , sin(beta_e_sun) ,0 ];          % position vector of the earth respect to the sun
 R_sat_ear = @(beta_sat_ear) r_sat_ear * [ cos(beta_sat_ear) , sin(beta_sat_ear) ,0 ] ;        % position vector of the sat respect to the earth
 R_sat_sun = @(r,beta_e_sun, beta_sat_e) R_ear_sun(r,beta_e_sun) + R_sat_ear(beta_sat_e);    % position vector of the sat respect to the sun
@@ -64,49 +82,33 @@ R_sat_sun = @(r,beta_e_sun, beta_sat_e) R_ear_sun(r,beta_e_sun) + R_sat_ear(beta
 unit_vector_normalto_sat = @(beta_sat_ear) -1 * R_sat_ear(beta_sat_ear) / norm(R_sat_ear(beta_sat_ear));
 A_sat = @(beta_sat_ear)  area_sat * unit_vector_normalto_sat(beta_sat_ear);
 
-
-
-
-
-
+ 
 
 %% Total radiation
 %% %%%%%%%%%%%%%%%%%%%
 tic
 % Define time parameters
 totaltime = 3.154e7; % Total simulation time (1 year in s)
-% numsteps = 50;
-% timestep = totaltime / numsteps;
+time_steps = 0 :60 : totaltime ;
+numsteps=length(time_steps);
 
-timestep = 7620 /20;
-numsteps=round(totaltime/timestep);
-time_steps = 1 :timestep : totaltime ;
 %Time Implementation
 % loop through time steps
 n_earth = 2*pi/totaltime;  % rad/s
-e = 0.0167;
-G = 6.6371e-11; % Gravitational Constant in m^3/kg*s^2
-mass_earth = 5.97e24; % in kg
-mu = G*mass_earth; % Standard gravitational parameter in m^3/s^2
-a = 1.49e11;   % m
-h = sqrt( mu * a * (1-e^2) ) ;   % kg.m^2/s
-
-alpha = 0.12; 
-eps = 0.5; 
-ae = alpha/eps;
-sigma = 5.67*10^-8; % m^2/K.w
-
+ 
 I_mat = zeros(numsteps,numNodes+1,numNodes+1);
 Q_mat = zeros(numsteps,numNodes+1,numNodes);
-Mat = zeros(numsteps,3);
+Q_p_mat = zeros(numsteps,1);
+Q_A_mat = zeros(numsteps,1);
+Q_sun_mat = zeros(numsteps,1);
 parfor step = 1:   numsteps
-    t = (step - 1)*timestep;
+    t = time_steps(step);
     M = n_earth*(t); 
     theta  = M+(2*e-0.25*e^3)*sin(M)+(5/4)*e^2*sin(2*M)+(13/12)*e^3*sin(3*M);
     r = (h^2/mu)/(1+e*cos(theta));   % earth sun dist
     r_EarToSun(step) = r;
     b_ear_sun = theta;
-    b_sat_ear = 2*pi*t / (127*60);
+    b_sat_ear = 2*pi*t / (127*60); %%%%%!!!!!!!
     % 1- Sun Model
     Q_sun = sun_model(r,r_ear,R_ear_sun(r,b_ear_sun),R_sat_sun(r,b_ear_sun, b_sat_ear), A_sat(b_ear_sun));
     %2- Planetary Albedo Model
@@ -116,9 +118,9 @@ parfor step = 1:   numsteps
     Q_gen = 10000; 
     Temp(step) =( ((Q_gen/eps)+( Q_p + ae*(Q_sun + Q_A)))/(2*area_sat*sigma) )^0.25;
     
-%     Mat(step,1) = Q_p ;
-%     Mat(step,2) = Q_sun ;
-%     Mat(step,3) = Q_A ;
+    Q_p_mat(step) = Q_p ;
+    Q_sun_mat(step) = Q_sun ;
+    Q_A_mat(step) = Q_A ;
 
     theta_earth_mat(step) = theta;
     theta_sat_mat(step) = b_sat_ear;
@@ -126,7 +128,7 @@ parfor step = 1:   numsteps
     I_mat(step,:,:) = I; 
     Q_mat(step,:,:) = Q; 
 
-    if step\100 == 0
+    if rem(step,100) == 0
         step
     end
 end
@@ -134,23 +136,7 @@ end
 
 
 toc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   
+  
  %%
 % figure
 % f_sun = 5e+3;
@@ -294,13 +280,65 @@ toc
 % 
 % end
 
+cond = 0;
+if cond == 1 
+
+if size(Q_mat,2) ~= size(Q_mat,3)
+    Q_mat(:,:,end+1) = Q_mat(:,:,end);
+end
+k = 1 %
+f=figure();  %'Position', [0, 0, 1500, 1200],
+r_eartosun = a;
+f_sun = 1e+3;
+b_ear_sun = theta_earth_mat(k);
+b_sat_ear = theta_sat_mat(k);
+pe = R_ear_sun(r_eartosun, b_ear_sun)/f_sun/2.5;
+psat = R_sat_ear(b_sat_ear); 
+
+quiver3(0,0,0,pe(1), pe(2), pe(3))
+hold on
+quiver3(pe(1),pe(2),pe(3),psat(1), psat(2), psat(3))
+% sun
+r_sun = 7e+9/f_sun;
+[x,y,z] = sphere;
+x = r_sun*x; y = r_sun*y; z = r_sun*z;
+surf(x,y,z, 10000*ones(size(z)),"EdgeColor","red","LineStyle","-.")
+% earth
+x = pe(1)+X; y = pe(2)+Y; z = pe(3)+Z;
+% surf(x,y,z, squeeze(I_mat(k,:,:)), 'EdgeAlpha',0.2)
+surf(x,y,z, squeeze(Q_mat(k,:,:)), 'EdgeAlpha',0.2)
+%satellite
+pss = pe + psat ;
+f_sat = 1e+6;
+n_sat = 10;
+[x,y,z] = ellipsoid(pss(1), pss(2), pss(3), 1*f_sat,1*f_sat,1*f_sat, n_sat);
+% x = f_sat * x; y = f_sat* y; z = f_sat*z;
+sat = surf(x,y,z, zeros(n_sat) );
+% rotate(sat, [0,0,1],rad2deg(b_sat_ear) )
+
+axis equal
+view(-20, 45)
+title("Albedo radiation reflected to satallite")
+hold off
+c=colorbar;
+c.LineWidth =2 ;
+c.FontSize = 16 ;
+caxis([0 max(max(max(Q_mat)))]);
+
+xlim([-1e7 8e7])
+ylim([-1e7 2e7])
+zlim([-2e7 1e7])
+
+%f.FontSize = 16;
+exportgraphics(f,'images/temp.png');
+
 
 
 %% Initialize gif
 if size(Q_mat,2) ~= size(Q_mat,3)
     Q_mat(:,:,end+1) = Q_mat(:,:,end);
 end
-timeloop = 1:20 ;
+timeloop = 1:120 ;
 
 for k = timeloop
     f=figure('visible','off');  %'Position', [0, 0, 1500, 1200],
@@ -346,7 +384,7 @@ for k = timeloop
     zlim([-2e7 1e7])
 
 %     f.FontSize = 16;
-    exportgraphics(f,'images/Animate.gif','Append',true);
+    exportgraphics(f,'images/Animate_sat.gif', 'Resolution', 1200,  'BackgroundColor', 'none','Append',true);
 
     k
 end
@@ -448,5 +486,5 @@ for i = 1 :1000: numsteps
 end
 
 
-
+end
 

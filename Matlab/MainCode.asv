@@ -318,7 +318,7 @@ sat = surf(x,y,z, zeros(n_sat) );
 
 axis equal
 view(-20, 45)
-title("Earth surface elements contribution to Albedo")
+title("Albedo radiation reflected to satallite")
 hold off
 c=colorbar;
 c.LineWidth =2 ;
@@ -328,17 +328,10 @@ caxis([0 max(max(max(Q_mat)))]);
 xlim([-1e7 8e7])
 ylim([-1e7 2e7])
 zlim([-2e7 1e7])
-axes('position',[.3 .05 .5 .4])
-box on
-% earth
-x = pe(1)+X; y = pe(2)+Y; z = pe(3)+Z;
-% surf(x,y,z, squeeze(I_mat(k,:,:)), 'EdgeAlpha',0.2)
-surf(x,y,z, squeeze(Q_mat(k,:,:)), 'EdgeAlpha',0.2)
-view(-20, 45)
-axis equal
 
 %f.FontSize = 16;
-exportgraphics(f,'images/albedo_elements.png', Resolution=1200);
+exportgraphics(f,'images/temp.png');
+
 
 
 %% Initialize gif

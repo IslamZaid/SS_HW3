@@ -32,7 +32,10 @@
 \usepackage{pgfplots}
 \usetikzlibrary{decorations.markings}
 \usetikzlibrary{shapes, arrows}
-
+\usepackage{tikz-3dplot}
+\usepackage{physics}
+\usepackage[outline]{contour} % glow around text
+\usepackage{subcaption}
 
 \usepackage{nomencl}
 \usepackage{siunitx}
@@ -60,8 +63,19 @@
 %----------------------------------------------
 
 
-
-
+\colorlet{veccol}{green!50!black}
+\colorlet{projcol}{blue!70!black}
+\colorlet{myblue}{blue!80!black}
+\colorlet{myred}{red!90!black}
+\colorlet{mydarkblue}{blue!50!black}
+\tikzset{>=latex} % for LaTeX arrow head
+\tikzstyle{proj}=[projcol!80,line width=0.08] %very thin
+\tikzstyle{area}=[draw=veccol,fill=veccol!80,fill opacity=0.6]
+\tikzstyle{vector}=[-stealth,myblue,thick,line cap=round]
+\tikzstyle{unit vector}=[->,veccol,thick,line cap=round]
+\tikzstyle{dark unit vector}=[unit vector,veccol!70!black]
+\usetikzlibrary{angles,quotes} % for pic (angle labels)
+\contourlength{1.3pt}
 
 
 
@@ -109,8 +123,140 @@ The thermal factors that affect a satellite
 \section{Methodology} IZ  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \indent
-\subsection{Dynamics and Celestial Mechanics}
+\subsection{Positioning and Discretization}
 
+
+\begin{figure}[h]
+ \centering
+ \begin{subfigure}[b]{0.48\textwidth}
+% 3D AXIS with spherical coordinates
+\tdplotsetmaincoords{60}{110}
+\resizebox{0.8\textwidth}{!}{
+\begin{tikzpicture}[scale=4,tdplot_main_coords]
+  
+  % VARIABLES
+  \def\rvec{.8}
+  \def\thetavec{30}
+  \def\psivec{60}
+  
+  % AXES
+  \coordinate (O) at (0,0,0);
+  \draw[thick,->] (0,0,0) -- (1,0,0) node[anchor=north east]{$x$};
+  \draw[thick,->] (0,0,0) -- (0,1,0) node[anchor=north west]{$y$};
+  \draw[thick,->] (0,0,0) -- (0,0,1) node[anchor=south]{$z$};
+  
+  % VECTORS
+  \tdplotsetcoord{P}{\rvec}{\thetavec}{\psivec}
+  \draw[vector,red] (O)  -- (P) node[above right=-2] {P};
+  \draw[dashed,myred]   (O)  -- (Pxy);
+  \draw[dashed,myred]   (P)  -- (Pxy);
+  \draw[dashed,myred]   (Py) -- (Pxy);
+  
+  % ARCS
+  \tdplotdrawarc[->]{(O)}{0.2}{0}{\psivec}
+    {anchor=north}{$\psi$}
+  \tdplotsetthetaplanecoords{\psivec}
+  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.4}{0}{\thetavec}
+    {anchor=south west}{\hspace{-1mm}$\theta$}
+
+\end{tikzpicture}
+}
+ \caption{}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.48\textwidth}
+% 3D AXIS with spherical coordinates, dA
+\tdplotsetmaincoords{60}{110}
+\resizebox{0.8\textwidth}{!}{
+\begin{tikzpicture}[scale=4,tdplot_main_coords]
+  
+  % VARIABLE
+  \def\rvec{1.0}
+  \def\thetavec{35}
+  \def\psivec{45}
+  \def\dtheta{10}
+  \def\dpsi{16}
+  \def\sphere#1#2#3{plot[domain=#1]({\rvec*sin(#2)*cos(#3)},{\rvec*sin(#2)*sin(#3)},{\rvec*cos(#2)})}
+  \contourlength{0.8pt}
+  
+  % AXES
+  \coordinate (O) at (0,0,0);
+  \draw[thick,->] (0,0,0) -- (1.16*\rvec,0,0) node[left=2,below]{$x$};
+  \draw[thick,->] (0,0,0) -- (0,1.1*\rvec,0) node[below=2,right=0]{$y$};
+  \draw[thick,->] (0,0,0) -- (0,0,1.1*\rvec) node[above]{$z$};
+  
+  % COORDINATES
+  \tdplotsetcoord{P}{\rvec}{\thetavec}{\psivec}
+  \tdplotsetcoord{PB}{\rvec}{\thetavec+\dtheta}{\psivec}
+  \tdplotsetcoord{PR}{\rvec}{\thetavec}{\psivec+\dpsi}
+  \tdplotsetcoord{PBR}{\rvec}{\thetavec+\dtheta}{\psivec+\dpsi}
+  
+  % CONE
+  \draw[veccol!20,very thin] (O)  -- (PBR);
+  \draw[veccol!20,very thin] (O)  -- (PR);
+  \draw[->,veccol] (O)  -- (P) node[below=5,left=2] {$\vb{r}$};
+  \draw[veccol,very thin] (O)  -- (PB);
+  
+  % PROJECTIONS
+  \draw[proj] %\thetavec+\dtheta
+    plot[domain=0:90]({\rvec*sin(\x)*cos(\psivec)},{\rvec*sin(\x)*sin(\psivec)},{\rvec*cos(\x)}) coordinate (BL);
+  \draw[proj]
+    plot[domain=0:90]({\rvec*sin(\x)*cos(\psivec+\dpsi)},{\rvec*sin(\x)*sin(\psivec+\dpsi)},{\rvec*cos(\x)}) coordinate (BR);
+  \draw[proj]
+    plot[domain=0:90]({\rvec*cos(\x)},{\rvec*sin(\x)},0);
+  \draw[proj] (O)  -- (BL); % PBxy
+  \draw[proj] (O)  -- (BR); % PBRxy
+  \draw[proj] (P)  -- (Pz);
+  \draw[proj] (PR)  -- (Pz) node[midway,above=-2,rotate=-24] {\contour{white}{$r\sin\theta$}};
+  %\draw[proj,projcol!15,dashed] (P) -- (Pxy);
+  %\draw[proj,projcol!15,dashed] (PR) -- (PRxy);
+  %\draw[proj,projcol!15,dashed] (PB) -- (PBxy);
+  %\draw[proj,projcol!15,dashed] (PBR) -- (PBRxy);
+  
+  % AREA
+  \draw[area]
+    plot[domain=0:.99*\dpsi]({\rvec*sin(\thetavec)*cos(\psivec+\x)},{\rvec*sin(\thetavec)*sin(\psivec+\x)},{\rvec*cos(\thetavec)}) --
+    plot[domain=0:.99*\dtheta]({\rvec*sin(\thetavec+\x)*cos(\psivec+\dpsi)},{\rvec*sin(\thetavec+\x)*sin(\psivec+\dpsi)},{\rvec*cos(\thetavec+\x)}) --
+    plot[domain=.99*\dpsi:0]({\rvec*sin(\thetavec+\dtheta)*cos(\psivec+\x)},{\rvec*sin(\thetavec+\dtheta)*sin(\psivec+\x)},{\rvec*cos(\thetavec+\dtheta)}) --
+    plot[domain=.99*\dtheta:0]({\rvec*sin(\thetavec+\x)*cos(\psivec)},{\rvec*sin(\thetavec+\x)*sin(\psivec)},{\rvec*cos(\thetavec+\x)}) --
+    cycle;
+    
+  % MEASURES
+  %\node[right=3,below right=-2] at (PB) {$r\sin\theta\dd{\psi}$};
+  %\node[right=5,below right=-2] at (PR) {$r\dd{\theta}$};
+  \draw[<->,proj,thin]
+    plot[domain=0:\dpsi]({\rvec*sin(\thetavec+1.11*\dtheta)*cos(\psivec+\x)},{\rvec*sin(\thetavec+1.11*\dtheta)*sin(\psivec+\x)},{\rvec*cos(\thetavec+1.11*\dtheta)})
+    node[right=12,below] {\contour{white}{$r\sin\theta\dd{\psi}$}};
+  \draw[<->,proj,thin]
+    plot[domain=0:\dtheta]({\rvec*sin(\thetavec+\x)*cos(\psivec+1.15*\dpsi)},{\rvec*sin(\thetavec+\x)*sin(\psivec+1.15*\dpsi)},{\rvec*cos(\thetavec+\x)}) 
+    node[above=11,right=-3] {$r\dd{\theta}$};
+    
+  % ANGLES
+  \tdplotdrawarc[->]{(O)}{0.35*\rvec}{0}{\psivec}
+    {below=-2}{$\psi$}
+  \tdplotdrawarc[->]{(O)}{0.45*\rvec}{\psivec}{\psivec+\dpsi}
+    {anchor=145,inner sep=1}{\contour{white}{$\dd{\psi}$}}
+  \tdplotsetthetaplanecoords{\psivec}
+  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.36*\rvec}{0}{\thetavec}
+    {right=2,above=-1}{$\theta$}
+  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.54*\rvec}{\thetavec}{\thetavec+\dtheta}
+    {left=0.2,above right=-2}{\contour{white}{$\dd{\theta}$}}
+  
+\end{tikzpicture}
+}
+
+    \caption{Caption}
+ \end{subfigure}
+
+    \caption{Caption}
+    \label{fig:enter-label}
+\end{figure}
+
+
+
+
+
+
+\subsection{Dynamics and Celestial Mechanics}
 (see Chapter 3), it provides us with the theoretical framework for celestial
 mechanics. The orbits that it forecasts will be relative to an Inertial Frame of Reference
 (IFR) that is fixed with respect to the stars; the consequential motion relative to the ground
@@ -124,7 +270,7 @@ These are
 planet, raised to the power 3/2.\\
 
 \paragraph{\ac{IFR}} 
-The \ac{IFR} is fixed with respect the sun, where the origin of the axes is the center of the sun. This \ac{IFR} is defined by three unit vectors $\vec{i}, \vec{j}, \vec{k}$ as shown in Figure \ref{fig:ifr}. $\vec{k}$ is normal to the paper and pointing out.
+The \ac{IFR} is fixed with respect to the sun, where the origin of the axes is the center of the sun. This \ac{IFR} is defined by three unit vectors $\vec{i}, \vec{j}, \vec{k}$ as shown in Figure \ref{fig:ifr}. $\vec{k}$ is normal to the paper and pointing out.
 
  
 \begin{figure}[h]
@@ -145,7 +291,7 @@ The \ac{IFR} is fixed with respect the sun, where the origin of the axes is the 
     \node (a) at (A) {Sun};
 
     % Earth
-    \draw[thick, fill=blue, draw=blue] (earth) circle (0.5);
+    \draw[thick, fill=blue!20!white, draw=blue] (earth) circle (0.5);
     % Text
     \node (b) at (B) {Earth};
     
@@ -219,7 +365,7 @@ Consequently,
 \begin{equation}\label{eq:7}
     [R_x(\phi(t))]=[R_y(\theta(t))]=[eye] .
 \end{equation}
-By substitution from Eq \ref{eq:11} into Eq \ref{eq:7},
+By substitution from Equation \ref{eq:11} into Equation \ref{eq:7},
 \begin{equation}\label{eq:04}
     [R(\phi, \theta, \psi)] = [eye] [ eye] [R_z(\psi_1(t))]
 \end{equation}
@@ -231,7 +377,7 @@ By substitution from Eq \ref{eq:11} into Eq \ref{eq:7},
     \vec{V}_1(\psi_1) = [R(\psi_1)] \vec{V}_1(\psi_1)  
 \end{equation}
 
-By substitution from Eq \ref{eq:01}, and Eq \ref{eq:04} into Eq \ref{eq:05}
+By substitution from Equation \ref{eq:01}, and Equation \ref{eq:04} into Equation \ref{eq:05}
 
 \begin{gather}\label{eq:06}
 \vec{V}_1(t) = \begin{bmatrix}
@@ -337,7 +483,7 @@ In this project, the time will be considered as the dependent variable. Thus, th
     \draw[-latex] (4,0) -- (5,0);
     \draw[-latex] (7,0) -- (8,0);
 \end{tikzpicture}
-\caption{Your caption here}
+\caption{Time to State Transition}
 \label{fig:2}
 \end{figure}
 
@@ -365,10 +511,10 @@ The periodic time ($\tau$),
 
 \subsection{Thermal Models}
 
-\paragraph{Solar radiation,} The solar is emitting a constant amount of traditional power ($P$) equals \SI{3.856e26}{\watt}. The Solar radiation flux of a point at a distance ($d$) from the center of the earth could be calculated according to Eq \ref{eq:solarflux}.
+\paragraph{Solar radiation,} The solar is emitting a constant amount of radiation power ($P$) equals \SI{3.856e26}{\watt}. The Solar radiation flux of a point at a distance ($d$) from the center of the earth could be calculated according to Equation \ref{eq:solarflux}.
 
 \begin{equation} \label{eq:solarflux}
-    J_s = \frac{P}{4\pi d^2}
+    J_s = \frac{Ps}{4\pi d^2}
 \end{equation}
 
 
@@ -391,7 +537,7 @@ The periodic time ($\tau$),
     \node (a) at (A) {Sun};
 
     % Earth
-    \draw[thick, fill=blue, draw=blue] (earth) circle (0.5);
+    \draw[thick, fill=blue!20!white, draw=blue] (earth) circle (0.5);
     % Text
     \node (b) at (B) {Earth};
     
@@ -404,8 +550,8 @@ The periodic time ($\tau$),
     % \draw[-latex, postaction={decorate}] (sun) -- (earth) node[pos=.55, below left] {$\vec{V}_{1}$};
     \draw[dashed, -latex, postaction={decorate},blue,thick] (earth) -- (sat) node[pos=.75, below right] {\textcolor{blue}{Planetary radiation}};
     \draw[dashed, -latex, postaction={decorate},red,thick] (sun) -- (sat) node[pos=.35, above left] {\textcolor{red}{Solar radiation}}; 
-    \draw[dashed, -latex, postaction={decorate},yellow,thick] (sun) -- (7.5,2.5) node[pos=.5, below right] {\textcolor{yellow}{Albedo radiation}}; 
-    \draw[dashed, -latex, postaction={decorate},yellow,thick] (7.5,2.5) -- (sat) node[pos=.5, below right] {}; 
+    \draw[dashed, -latex, postaction={decorate},yellow!90!black,thick] (sun) -- (7.5,2.5) node[pos=.5, below right] {\textcolor{yellow!90!black}{Albedo radiation}}; 
+    \draw[dashed, -latex, postaction={decorate},yellow!90!black,thick] (7.5,2.5) -- (sat) node[pos=.5, below right] {}; 
     
     % Angles
     % \draw[->] (sun) ++(0:1.5) arc (0:15:1.5) node[midway, right] {$\psi_1$};
@@ -421,9 +567,71 @@ The periodic time ($\tau$),
     \draw[-latex] (0,0) -- (1,0) node[below right] {$i$};
     \draw[-latex] (0,0) -- (0,1) node[above left] {$j$};
 \end{tikzpicture}
-\caption{Radiation modes}
-\label{fig:ifr}
+\caption{Radiation Modes}
+\label{fig:}
 \end{figure}
+
+
+The relative motion motion between the three components sun, earth, and satellite provides the possibility of eclipse conditions, in which the the satellite will be outside the visible region by the sun. Consequently, the direct solar radiation will not arrive the satellite. This case can be captured in the simulation by defining a certain condition that can decide if the satellite in eclipse quantiivly. Equation \ref{eq:psi13
+} provides the proposed mathematical concept which is calculated each time step to determine if there is a direct contribution from the sun radiation.
+
+\begin{figure}[h]
+ 
+\centering
+\begin{tikzpicture}[>=latex, decoration={markings, mark=at position 0.5 with {\arrow{>}}}]
+    % Coordinates
+    \coordinate (sun) at (0,0);
+    \coordinate (earth) at (8,1);
+    \coordinate (sat) at (9,3);
+    \coordinate (A) at (-1,1);
+    \coordinate (B) at (8,-0.5);
+    \coordinate (C) at (9,3.5);
+    
+    % Earth
+    \draw[thick, fill=yellow!50!red, draw=yellow!80!red] (sun) circle (1);
+    % Text
+    \node (a) at (A) {Sun};
+
+    % Earth
+    \draw[thick, fill=blue!20!white, draw=blue] (earth) circle (1);
+    % Text
+    \node (b) at (B) {Earth};
+    
+    % Moon
+    \node[circle, inner sep=1.5pt, outer sep=2pt, fill=black!30] (MOON) at (sat) {};
+    % Text 
+    \node (c) at (C) {Sat};
+    
+    % Lines
+    \draw[-latex, postaction={decorate}] (sun) -- (earth) node[pos=.55, below left] {$\vec{V}_{1}$};
+    \draw[dashed, -latex, postaction={decorate}] (earth) -- (sat) node[pos=.75, below right] {$\vec{V_2}$};
+    \draw[dashed, -latex, postaction={decorate}] (sun) -- (sat) node[pos=.55, above left] {$\vec{V_3}$}; 
+    \draw[dashed, -latex, postaction={decorate},draw=red] (sun) -- (7.8,1.95) node[pos=.55, below right] {};  
+    \draw[dashed, -latex, postaction={decorate},draw=red] (earth) -- (7.8,1.95) node[pos=.55, below right] {}; 
+
+    
+    % Angles
+    \draw[->] (sun) ++(7:2.5) arc (5:18:2.5) node[midway, right] {$\psi_{13}$};
+    \draw[->, ,draw=red] (sun) ++(7:3.8) arc (5:12:3.8) node[midway, right, shift={(0,0.15)}] {\textcolor{red}{$\psi_{min}=\SI{0.5}{\degree}$}};
+    % \dra1[->] (earth) ++(0:0.6) arc (0:60:0.6) node[midway, right] {$\psi_{min}$};
+    
+    % Point
+    \draw[fill=black] (sun) circle (1pt) node[below, shift={(0,-0.1)}] {$\mathrm{O}$};
+
+    % X and Y axes
+    \draw[-latex] (-1,0) -- (10,0) node[below right] {$x$};
+    \draw[-latex] (0,-1) -- (0,3) node[above left] {$y$};
+    % i and j axes
+    \draw[-latex] (0,0) -- (1,0) node[below right] {$i$};
+    \draw[-latex] (0,0) -- (0,1) node[above left] {$j$};
+\end{tikzpicture}
+\caption{Layout of Eclipse Condition, and the relation with $\psi_{min}$}
+\label{fig:}
+\end{figure}
+
+\begin{equation}\label{eq:psi13}
+    \psi_{13} = \frac{\vec{V}_1\cdot \vec{V}_3}{\norm{\vec{V}_1}\norm{\vec{V}_3}}
+\end{equation}
 
 \paragraph{Albedo radiation} 
 The portion of solar radiation that bounces off a planet's surface and/or atmosphere. this fraction (a) is in range (0.31 - 0.39). 
@@ -431,53 +639,9 @@ The portion of solar radiation that bounces off a planet's surface and/or atmosp
     \delta Q_{r_{ij}} = I_{i0} dA_i\cos{\phi_i}\times\frac{dA_j \cos{\phi_j}}{d^2}
 \end{equation}
 
-\paragraph{Planetary radiation} 
+Each place on the earth surface has different geometrical relations wrt the sun and satellite. Thus it's mandatory to discretize the earth into a mesh grid to be able to numerically integrate over the earth surface to compute the total absorbed radiation by albedo mode. the following algorithm is developed to compute the incident radiation from each element on the earth surface to the satellite, and sum all the earths elements contributions to get the total albedo radiation as described in Algorithm \ref{alg:01}.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Albedo
-Solar Radiation
-Planetary
-Emission (we need to further look into it)
-
-\subsection{Positioning} %%%%%%Needs to change%%%%%%%
-Mathematical approach
-explanation of each vector
-implementation of vectors with time
-discretization 
-Earth model, and coordinates
 
 \RestyleAlgo{ruled}
 
@@ -486,29 +650,172 @@ Earth model, and coordinates
 \SetKwComment{Comment}{/* }{ */}
 
 \begin{algorithm}[hbt!]
-\caption{An algorithm with caption}\label{alg:two}
-\KwData{$n \geq 0$}
-\KwResult{$y = x^n$}
-$y \gets 1$\;
-$X \gets x$\;
-$N \gets n$\;
-\While{$N \neq 0$}{
-  \eIf{$N$ is even}{
-    $X \gets X \times X$\;
-    $N \gets \frac{N}{2} $ \Comment*[r]{This is a comment}
-  }{\If{$N$ is odd}{
-      $y \gets y \times X$\;
-      $N \gets N - 1$\;
-    }
-  }
-}
+\caption{Satellite-Element Interaction Algorithm for Albedo Radiation}\label{alg:two}
+\label{alg:01}
+\KwData{$\vec{V}_{n}$, $\vec{A}_{sat}$,$\vec{V}_{sat/elm}$, $a$, $I_{i0}$}
+\KwResult{$Q_a = \iint{I_{i0} dA_i\cos{\phi_i}\times\frac{dA_j \cos{\phi_j}}{d^2}}$}
+$\vec{V}_{n} \gets $List of normal vectors on elements\;
+$\vec{A}_{sat} \gets $Satellite area Vector\;
+$\vec{V}_{sat/elm} \gets$ Position vector of satellite/element\;
+
+    \For{  elm = 1 : numElments }{
+        $\cos{\phi_1} = \frac{\vec{V}_{n}(elm) \cdot \vec{V}_{sat/elm}}{\norm{\vec{V}_{n}(elm)}\cdot\norm{\vec{V}_{sat/elm}}}$ \\
+        $\cos{\phi_2} = \frac{\vec{A}_{sat} \cdot \vec{V}_{sat/elm}}{\norm{\vec{A}_{sat}}\cdot\norm{\vec{V}_{sat/elm}}}$ \\
+        $d = \norm{\vec{V}_{sat/elm}}$\\
+        $Q_{a}(elm) = a \times I_{i0} \times \cos{\phi_1}\times \cos{\phi_2}\times 
+        A_{sat} \times A_{elm}/d^2$ }
+        
+    $Q_a = \Sigma_{i=1}^{numElements}{Q_s(i)}  $
 \end{algorithm}
 
+\begin{equation}
+    \vec{V}_{elm/sat} = \vec{V}_{2} - \vec{V}_{elm}
+\end{equation}
+
+\begin{figure}[h]
+ 
+\centering
+\begin{tikzpicture}[>=latex, decoration={markings, mark=at position 0.5 with {\arrow{>}}}]
+    % Coordinates
+    \coordinate (earth) at (0,0);
+    \coordinate (sat) at (2,3);
+    \coordinate (A) at (-1,1);
+    \coordinate (B) at (0,-1.5);
+    \coordinate (C) at (2,3.5);
+    
 
 
+    % Earth
+    \draw[thick, fill=blue!20!white, draw=blue] (earth) circle (1);
+    % Text
+    \node (b) at (B) {Earth};
+    
+    % Moon
+    \node[circle, inner sep=1.5pt, outer sep=2pt, fill=black!30] (MOON) at (sat) {};
+    % Text 
+    \node (c) at (C) {Sat};
+    
+    % Lines
+    % \draw[-latex, postaction={decorate}] (sun) -- (earth) node[pos=.55, below left] {$\vec{V}_{1}$};
+    \draw[dashed, -latex, postaction={decorate},green,thick] (earth) -- (sat) node[pos=.60, below right] {\textcolor{green}{$\vec{V_2}$}};
+    \draw[dashed, -latex, postaction={decorate},yellow!30!blue,thick] ({cos(135)},{sin(135}) -- (sat) node[pos=.4, above left] {\textcolor{yellow!30!blue}{$\vec{V}_{sat/elm}$}}; 
+    \draw[dashed, -latex, postaction={decorate},yellow!50!red,thick] (0,0) --  ({cos(135)},{sin(135}) node[pos=.5,  left] {\textcolor{yellow!50!red}{$\vec{V}_{elm}$}}; 
+
+    % Point
+    \draw[fill=yellow!10!red, draw=yellow!10!red] ({cos(135)},{sin(135}) circle (2pt) node[left, shift={(-0.,0)}] {\textcolor{yellow!10!red}{$\mathrm{element}$}};
+    % Point
+    \draw[fill=yellow!50!red] (sun) circle (1pt) node[below, shift={(0,-0.1)}] {$\mathrm{O}$};
+
+    % X and Y axes
+    \draw[-latex] (-1,0) -- (4,0) node[below right] {$x$};
+    \draw[-latex] (0,-1) -- (0,3) node[above left] {$y$};
+    % i and j axes
+    \draw[-latex] (0,0) -- (1,0) node[below right] {$i$};
+    \draw[-latex] (0,0) -- (0,1) node[above left] {$j$};
+\end{tikzpicture}
+\caption{Position Vector of the Elements on Earth Surface}
+\label{fig:}
+\end{figure}
+
+
+\paragraph{Planetary radiation,} the Earth's temperature drives the planet to emit a radiation power that is proportional to the quadratic of the temperature as shown in Equation \ref{eq:palnet_rad}. 
+
+\begin{equation}\label{eq:palnet_rad}
+    Q_p = \varepsilon \sigma T^4
+\end{equation}
+
+
+\paragraph{Energy balance,} the satellite is represented as a node with temperature ($T_{sat}$). Accordingly, the satellite emits a radiation power as shown in Equation \ref{eq:sat_rad}
+
+\begin{equation}\label{eq:sat_rad}
+    J_{\text {radiated }} = \varepsilon \sigma T^4
+\end{equation}
+
+The satellite has specific values of absorptivity ($\alpha$) and emissivity ($\epsilon$) according to the properties of the surface. Thus, the energy balance can be expressed as follow; 
+
+\begin{equation}
+A_\alpha J_{\text {absorbed }}=A_\alpha \alpha J_{\text {incident }}=A_{\varepsilon} J_{\text {radiated }}
+\end{equation}
+
+
+\begin{equation}
+J_{\text {incident }} = J_p A_p \alpha +\alpha \left(J_s A_s+J_a A_a\right)
+\end{equation}
+
+
+\begin{equation}
+T^4=\frac{A_\alpha}{A_{\varepsilon}} \frac{J_{\text {incident }}}{\sigma}\left(\frac{\alpha}{\varepsilon}\right)
+\end{equation} 
+
+
+\begin{equation}
+T^4=\frac{Q}{A_{t o t}(\sigma \varepsilon)}+\frac{J_p A_p}{A_{t o t} \sigma}+\left(\frac{J_s A_s+J_a A_a}{A_{t o t} \sigma}\right) \frac{\alpha}{\varepsilon}
+\end{equation}
+
+Q: is the generated heat due to the satellite systems.
+
+
+ 
 \newpage
 \section{Results} %MSF&IZ
 \indent
+
+\subsection{Sensitivity Analysis}
+
+A convergence study is performed to monitor the simulation performance versus the number of elements. The earth surface were divided into number of elements in longitude and latitude direction equally. the simulation were performed on a set of number of elements (10, 20, 40, and 80). Figure \ref{fig:ss} shows the sensitivity study, considering the absorbed radiation and the satellite temperature as probe. those two values converge at number of elements of 40 elements in longitude and latitude, leading to $1600$ $(40\times40)$ elements in total. According to this study the number of elements is fixed at 40 elements in both directions for the following simulations.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width = 0.8 \textwidth]{Matlab/Sensitivity/fig_Q_sensitivity_0_180.png}
+        \caption{}
+        \label{fig:ssa}    
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width = 0.8 \textwidth]{Matlab/Sensitivity/fig_temp_sensitivity_0_180.png}
+        \caption{}
+        \label{fig:ssb}    
+    \end{subfigure}
+    \caption{(a) Total absorbed radiation and relative error, (b) satellite temperature and relative error for different number of elements at a satellite position between the sun and the earth.}
+    \label{fig:ss}
+\end{figure}
+
+\paragraph{Direct solar radiation on the earth surface,} to test the code performance, each component of the code is tested separately. Thus, the direct radiation from the sun to the earth is computed for each element on the earth surface. Figure \ref{fig:solar-rad-on-earth} shows the incident radiation on the earth surface which depends on how far is this point from the sun. The change in the distance (d) of each element on the earth from the sun is very small. Thus, it is expected to get very small differences in the incident radiation power as evident from the figure where the maximum value and the minimum value are\textcolor{red}{ X , and Y} respectively. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = 0.6\textwidth]{Matlab/Sensitivity/fig_0_180.png}
+    \caption{Incident radiation on the earth surface}
+    \label{fig:solar-rad-on-earth}
+\end{figure}
+
+
+The incident solar radiation on the earth is reflected to the universe, portion of this radiation is intercepted by the satellite which represents the albedo radiation. Figure \ref{fig:albedo} elucidates the contribution of each element in the earth surface to the satellite absorbed radiation. It's evident from the figure that the angle between the two surfaces directly influence the amount of contribution. Furthermore, the half side of the earth that is far from the sun does not contribute to the albedo radiation absolutely which provides a good validation case for our simulation framework. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = 0.6\textwidth]{Matlab/Sensitivity/fig_0_180.png}
+    \caption{Incident radiation on the earth surface}
+    \label{fig:albedo}
+\end{figure}
+
+\paragraph{Temperature variation wrt periodic time of earth and satellite,}
+Figure \ref{fig:temp} shows the temperature variation over one orbital period time of satellite. The satellite temperature varies according to the time periodically and osciolates between minimum value of X and maximum value of Y.  
+
+\begin{figure}
+    \centering
+    \includegraphics{Matlab/Sensitivity/fig_Q_sensitivity_0_180.png}
+    \caption{Caption}
+    \label{fig:temp}
+\end{figure}
+
+
+
+
+
+
+
+ 
 FOR EACH MATERIAL (EXCEPT ANIMATIONS)
 \begin{enumerate}
     \item Temp variance w.r.t earth-sun period
@@ -539,12 +846,11 @@ FOR EACH MATERIAL (EXCEPT ANIMATIONS)
 %%%%%%%%%%%
 %%%%%%%%%%%%
 \nomenclature[A, 01]{$\mu$}{\href{https://en.wikipedia.org/wiki/Standard_gravitational_parameter}{Gravitational Parameter} \nomunit{\SI{3.986e14}{\meter\cubed\per\second\squared}}}
-\nomenclature[A, 02]{\(h\)}{\href{https://physics.nist.gov/cgi-bin/cuu/Value?h}
-{Planck constant}
-\nomunit{\SI[group-digits=false]{6.62607015e-34}{\joule\per\hertz}}}
-\nomenclature[A, 03]{\(G\)}{\href{https://physics.nist.gov/cgi-bin/cuu/Value?bg}
-{Gravitational constant} 
-\nomunit{\SI[group-digits=false]{6.67430e-11}{\meter\cubed\per\kilogram\per\second\squared}}}
+\nomenclature[A, 02]{\(Ps\)}{\href{https://en.wikipedia.org/wiki/Standard_gravitational_parameter}{Solar Power}\nomunit{\SI[group-digits=false]{3.856e-26}{\watt}}}
+\nomenclature[A, 03]{\(G\)}{\href{https://physics.nist.gov/cgi-bin/cuu/Value?bg}{Gravitational constant} \nomunit{\SI[group-digits=false]{6.67430e-11}{\meter\cubed\per\kilogram\per\second\squared}}}
+
+
+
 \nomenclature[B, 03]{\(\mathbb{R}\)}{Real numbers}
 \nomenclature[B, 02]{\(\mathbb{C}\)}{Complex numbers}
 \nomenclature[B, 01]{\(\mathbb{H}\)}{Quaternions}

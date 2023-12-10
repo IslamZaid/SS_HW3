@@ -120,11 +120,18 @@ The thermal factors that affect a satellite
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Methodology} IZ  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Methodology}   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \indent
+
+the spatial and temporal aspects of the simulation are detailed to elucidate the modeling and computational processes. Spherical coordinates, specifically ($r, \theta, \psi$), are employed to describe the positions of orbital elements in three-dimensional space, delineating the satellite's relative location to Earth. Discretization of the Earth's surface into latitude and longitude intervals is crucial for accurately representing interactions with solar radiation. Dynamically, the \ac{IFR} is defined with respect to the sun, facilitating the translation of positions between the Earth, sun, and satellite. The time-dependent rotational dynamics and celestial mechanics are articulated, utilizing orbital elements to encapsulate the satellite's motion. The thermal models introduced include calculations for solar radiation flux, albedo radiation, and planetary radiation, considering the complex geometry of the Earth-sun-satellite system. The methodology also elucidates the determination of eclipse conditions based on the angular position between the sun, Earth, and satellite. Integration over discretized Earth surface elements is emphasized for comprehensive assessments of absorbed radiation. However this study is simplified to represent a simple relative motion in the equatorial plane, but the conceptual structure of the Matlab code is build with the ability to extend the simulation to 3D coordinates with minimal effort.
+
+
 \subsection{Positioning and Discretization}
 
+Spherical coordinates ($r,\theta,\psi$) are commonly used to describe positions in three-dimensional space. In this project, these coordinates can be associated with the position of the satellite relative to the Earth or surface elements relative to the center of the earth as shown in Figure \ref{fig:pos}. The radial distance (r) represents the distance from the Earth's center to the satellite, while the polar angle ($\theta$) and azimuthal angle ($\psi$) define the orientation of the satellite in space.
+
+Figure \ref{fig:elm} introduces the concept of discretizing the Earth's surface into small areas, represented by differential changes ($d\theta, d\psi$). In the MATLAB simulation, this discretization is crucial for modeling how different regions on the Earth's surface interact with solar radiation. Each discrete element can be associated with latitude and longitude intervals, allowing to calculate the varying solar input across the Earth.
 
 \begin{figure}[h]
  \centering
@@ -162,6 +169,7 @@ The thermal factors that affect a satellite
 \end{tikzpicture}
 }
  \caption{}
+ \label{fig:pos}
  \end{subfigure}
  \begin{subfigure}[b]{0.48\textwidth}
 % 3D AXIS with spherical coordinates, dA
@@ -207,10 +215,6 @@ The thermal factors that affect a satellite
   \draw[proj] (O)  -- (BR); % PBRxy
   \draw[proj] (P)  -- (Pz);
   \draw[proj] (PR)  -- (Pz) node[midway,above=-2,rotate=-24] {\contour{white}{$r\sin\theta$}};
-  %\draw[proj,projcol!15,dashed] (P) -- (Pxy);
-  %\draw[proj,projcol!15,dashed] (PR) -- (PRxy);
-  %\draw[proj,projcol!15,dashed] (PB) -- (PBxy);
-  %\draw[proj,projcol!15,dashed] (PBR) -- (PBRxy);
   
   % AREA
   \draw[area]
@@ -220,9 +224,7 @@ The thermal factors that affect a satellite
     plot[domain=.99*\dtheta:0]({\rvec*sin(\thetavec+\x)*cos(\psivec)},{\rvec*sin(\thetavec+\x)*sin(\psivec)},{\rvec*cos(\thetavec+\x)}) --
     cycle;
     
-  % MEASURES
-  %\node[right=3,below right=-2] at (PB) {$r\sin\theta\dd{\psi}$};
-  %\node[right=5,below right=-2] at (PR) {$r\dd{\theta}$};
+  % MEASURES;
   \draw[<->,proj,thin]
     plot[domain=0:\dpsi]({\rvec*sin(\thetavec+1.11*\dtheta)*cos(\psivec+\x)},{\rvec*sin(\thetavec+1.11*\dtheta)*sin(\psivec+\x)},{\rvec*cos(\thetavec+1.11*\dtheta)})
     node[right=12,below] {\contour{white}{$r\sin\theta\dd{\psi}$}};
@@ -244,11 +246,11 @@ The thermal factors that affect a satellite
 \end{tikzpicture}
 }
 
-    \caption{Caption}
+    \caption{}
+    \label{fig:elm}
  \end{subfigure}
 
-    \caption{Caption}
-    \label{fig:enter-label}
+    \caption{(a) ,(b)}
 \end{figure}
 
 
@@ -257,17 +259,7 @@ The thermal factors that affect a satellite
 
 
 \subsection{Dynamics and Celestial Mechanics}
-(see Chapter 3), it provides us with the theoretical framework for celestial
-mechanics. The orbits that it forecasts will be relative to an Inertial Frame of Reference
-(IFR) that is fixed with respect to the stars; the consequential motion relative to the ground
-will also be covered in Chapter 5.
-
-Kepler laws:
-These are
-1. the orbit of each planet is an ellipse with the Sun occupying one focus;
-2. the line joining the Sun to a planet sweeps out equal areas in equal intervals of time;
-3. a planet’s orbital period is proportional to the mean distance between the Sun and the
-planet, raised to the power 3/2.\\
+ 
 
 \paragraph{\ac{IFR}} 
 The \ac{IFR} is fixed with respect to the sun, where the origin of the axes is the center of the sun. This \ac{IFR} is defined by three unit vectors $\vec{i}, \vec{j}, \vec{k}$ as shown in Figure \ref{fig:ifr}. $\vec{k}$ is normal to the paper and pointing out.
@@ -625,7 +617,7 @@ The relative motion motion between the three components sun, earth, and satellit
     \draw[-latex] (0,0) -- (1,0) node[below right] {$i$};
     \draw[-latex] (0,0) -- (0,1) node[above left] {$j$};
 \end{tikzpicture}
-\caption{Layout of Eclipse Condition, and the relation with $\psi_{min}$}
+\caption{Layout of a Critical Eclipse Condition w.r.t $\psi_{min}$}
 \label{fig:}
 \end{figure}
 
@@ -804,10 +796,12 @@ The incident solar radiation on the earth is reflected to the universe, portion 
  \newpage
 
 \paragraph{Temperature variation w.r.t time,}
-Figure \ref{fig:temptime} shows the temperature variation over 24-hour time with a scope of the behavior over around 2-hour time (satellite periodic time). The satellite temperature varies according to the time periodically and osciolates between minimum value of \textcolor{red}{X} and maximum value of Y.  
+Figure \ref{fig:temptime} shows the temperature variation over 24 hours period time with a scope of the behavior over around 2 hours period time (satellite periodic time). The satellite temperature varies according to the time periodically and oscillates between a minimum value of \textcolor{red}{X} and a maximum value of Y.  
 
+\paragraph{$Q_{s}$,$Q_{a}$ and $Q_{p}$ variation w.r.t time,}
+text
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \begin{subfigure}[b]{1\textwidth}
         \includegraphics[width=\textwidth]{Matlab/images/temp_time.png}
@@ -816,36 +810,22 @@ Figure \ref{fig:temptime} shows the temperature variation over 24-hour time with
     \end{subfigure}
     \begin{subfigure}[b]{1\textwidth}
         \includegraphics[width=\textwidth]{Matlab/images/QQQ_time.png}
-        \caption{Radiation variation over 24-hour period of time}
+        \caption{}
         \label{fig:temptime}
     \end{subfigure}
     \begin{subfigure}[b]{1\textwidth}
-        \includegraphics[width=\textwidth]{Matlab/images/QQQ_time.png}
-        \caption{Radiation variation over 24-hour period of time}
+        \includegraphics[width=\textwidth]{Matlab/images/Q_time.png}
+        \caption{}
         \label{fig:temptime}
     \end{subfigure}
-    \caption{(a) Temperature variation, and (b) radiation power variation over time}
-\end{figure}
-
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{Matlab/images/temp_time.png}
-    \caption{Temperature variation over 24-hour period of time}
-    \label{fig:temptime}
+    \caption{(a) Temperature variation, (b) radiation power variation, and (c) Total incident traditional power to the satellite over time}
 \end{figure}
 
 
 
-\paragraph{$Q_{s}$,$Q_{a}$ and $Q_{p}$ variation w.r.t time,}
 
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\textwidth]{Matlab/images/QQQ_time.png}
-    \caption{Temperature variation over 24-hour period of time}
-    \label{fig:temptime}
-\end{figure}
+
 
  
 FOR EACH MATERIAL (EXCEPT ANIMATIONS)

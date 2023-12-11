@@ -108,215 +108,35 @@
 \maketitle
 
 
-\section{Introduction} MSF
-\indent
+\section{Introduction} 
+\indent In this report, a thermal model was made on MATLAB to analyze the thermal effects of solar radiation, albedo radiation, and planetary radiation on a satellite. The satellite was modeled to be in LEO orbit, with an altitude of 2000km. The orbit of the satellite is perfectly circular, has an eccentricity (e) of 0, and has an orbital period of 128 min. The velocity of the satellite in orbit is 6.88 km/s, and the satellite is modeled as a disc with a surface area of 100 m2 on each side of the disc. The material of the satellite was decided based on the results of multiple materials to assess which material would allow the satellite to have the most ideal temperature.
 
-Orbital elements (don't forget material and properties of sat)
-Objective
-The thermal factors that affect a satellite
-
-\newpage
+\indent The main objective of this assignment was to measure and plot the temperature variation of the satellite while it was in orbit around the Earth for a whole year. While taking into consideration different environmental elements and instances, such as reflection of radiation off the surface of the Earth and onto the satellite, and ellipses the satellite will encounter during the simulation period.
 
 
+\section{Methodology}   
+\indent The spatial and temporal aspects of the simulation are detailed to elucidate the modeling and computational processes. Spherical coordinates, specifically ($r,\theta,\psi$), are employed to describe the positions of orbital elements in three-dimensional space, delineating the satellite’s relative location to Earth. Discretization of the Earth’s surface into latitude and longitude intervals is crucial for accurately representing interactions with solar radiation. Dynamically, the Inertial Frame of Reference \ac{IFR} is defined with respect to the sun, facilitating the translation of positions between the Earth, sun, and satellite. The time-dependent rotational dynamics and celestial mechanics are articulated, utilizing orbital elements to encapsulate the satellite’s motion.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Methodology}   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\indent
-
-the spatial and temporal aspects of the simulation are detailed to elucidate the modeling and computational processes. Spherical coordinates, specifically ($r, \theta, \psi$), are employed to describe the positions of orbital elements in three-dimensional space, delineating the satellite's relative location to Earth. Discretization of the Earth's surface into latitude and longitude intervals is crucial for accurately representing interactions with solar radiation. Dynamically, the \ac{IFR} is defined with respect to the sun, facilitating the translation of positions between the Earth, sun, and satellite. The time-dependent rotational dynamics and celestial mechanics are articulated, utilizing orbital elements to encapsulate the satellite's motion. The thermal models introduced include calculations for solar radiation flux, albedo radiation, and planetary radiation, considering the complex geometry of the Earth-sun-satellite system. The methodology also elucidates the determination of eclipse conditions based on the angular position between the sun, Earth, and satellite. Integration over discretized Earth surface elements is emphasized for comprehensive assessments of absorbed radiation. However this study is simplified to represent a simple relative motion in the equatorial plane, but the conceptual structure of the Matlab code is build with the ability to extend the simulation to 3D coordinates with minimal effort.
+\indent The thermal models introduced include calculations for solar radiation flux, albedo radiation, and planetary radiation, considering the complex geometry of the Earth-sun-satellite system. The methodology also elucidates the determination of eclipse conditions based on the angular position between the sun, Earth, and satellite. Integration over discretized Earth surface elements is emphasized for comprehensive assessments of absorbed radiation. However, this study is simplified to represent a simple relative motion in the equatorial plane, but the conceptual structure of the Matlab code is built with the ability to extend the simulation to 3D coordinates with minimal effort.
 
 
 \subsection{Positioning and Discretization}
 
-Spherical coordinates ($r,\theta,\psi$) are commonly used to describe positions in three-dimensional space. In this project, these coordinates can be associated with the position of the satellite relative to the Earth or surface elements relative to the center of the earth as shown in Figure \ref{fig:pos}. The radial distance (r) represents the distance from the Earth's center to the satellite, while the polar angle ($\theta$) and azimuthal angle ($\psi$) define the orientation of the satellite in space.
+Spherical coordinates ($r,\theta,\psi$) are commonly used to describe positions in three-dimensional space. In this project, these coordinates can be associated with the position of the satellite relative to the Earth or surface elements relative to the center of the earth, as shown in Figure \ref{fig:pos}. The radial distance (r) represents the distance from the Earth's center to the satellite, while the polar angle ($\theta$) and azimuthal angle ($\psi$) define the orientation of the satellite in space.
 
-Figure \ref{fig:elm} introduces the concept of discretizing the Earth's surface into small areas, represented by differential changes ($d\theta, d\psi$). In the MATLAB simulation, this discretization is crucial for modeling how different regions on the Earth's surface interact with solar radiation. Each discrete element can be associated with latitude and longitude intervals, allowing to calculate the varying solar input across the Earth.
-
-\begin{figure}[h]
- \centering
- \begin{subfigure}[b]{0.48\textwidth}
-% 3D AXIS with spherical coordinates
-\tdplotsetmaincoords{60}{110}
-\resizebox{0.8\textwidth}{!}{
-\begin{tikzpicture}[scale=4,tdplot_main_coords]
-  
-  % VARIABLES
-  \def\rvec{.8}
-  \def\thetavec{30}
-  \def\psivec{60}
-  
-  % AXES
-  \coordinate (O) at (0,0,0);
-  \draw[thick,->] (0,0,0) -- (1,0,0) node[anchor=north east]{$x$};
-  \draw[thick,->] (0,0,0) -- (0,1,0) node[anchor=north west]{$y$};
-  \draw[thick,->] (0,0,0) -- (0,0,1) node[anchor=south]{$z$};
-  
-  % VECTORS
-  \tdplotsetcoord{P}{\rvec}{\thetavec}{\psivec}
-  \draw[vector,red] (O)  -- (P) node[above right=-2] {P};
-  \draw[dashed,myred]   (O)  -- (Pxy);
-  \draw[dashed,myred]   (P)  -- (Pxy);
-  \draw[dashed,myred]   (Py) -- (Pxy);
-  
-  % ARCS
-  \tdplotdrawarc[->]{(O)}{0.2}{0}{\psivec}
-    {anchor=north}{$\psi$}
-  \tdplotsetthetaplanecoords{\psivec}
-  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.4}{0}{\thetavec}
-    {anchor=south west}{\hspace{-1mm}$\theta$}
-
-\end{tikzpicture}
-}
- \caption{}
- \label{fig:pos}
- \end{subfigure}
- \begin{subfigure}[b]{0.48\textwidth}
-% 3D AXIS with spherical coordinates, dA
-\tdplotsetmaincoords{60}{110}
-\resizebox{0.8\textwidth}{!}{
-\begin{tikzpicture}[scale=4,tdplot_main_coords]
-  
-  % VARIABLE
-  \def\rvec{1.0}
-  \def\thetavec{35}
-  \def\psivec{45}
-  \def\dtheta{10}
-  \def\dpsi{16}
-  \def\sphere#1#2#3{plot[domain=#1]({\rvec*sin(#2)*cos(#3)},{\rvec*sin(#2)*sin(#3)},{\rvec*cos(#2)})}
-  \contourlength{0.8pt}
-  
-  % AXES
-  \coordinate (O) at (0,0,0);
-  \draw[thick,->] (0,0,0) -- (1.16*\rvec,0,0) node[left=2,below]{$x$};
-  \draw[thick,->] (0,0,0) -- (0,1.1*\rvec,0) node[below=2,right=0]{$y$};
-  \draw[thick,->] (0,0,0) -- (0,0,1.1*\rvec) node[above]{$z$};
-  
-  % COORDINATES
-  \tdplotsetcoord{P}{\rvec}{\thetavec}{\psivec}
-  \tdplotsetcoord{PB}{\rvec}{\thetavec+\dtheta}{\psivec}
-  \tdplotsetcoord{PR}{\rvec}{\thetavec}{\psivec+\dpsi}
-  \tdplotsetcoord{PBR}{\rvec}{\thetavec+\dtheta}{\psivec+\dpsi}
-  
-  % CONE
-  \draw[veccol!20,very thin] (O)  -- (PBR);
-  \draw[veccol!20,very thin] (O)  -- (PR);
-  \draw[->,veccol] (O)  -- (P) node[below=5,left=2] {$\vb{r}$};
-  \draw[veccol,very thin] (O)  -- (PB);
-  
-  % PROJECTIONS
-  \draw[proj] %\thetavec+\dtheta
-    plot[domain=0:90]({\rvec*sin(\x)*cos(\psivec)},{\rvec*sin(\x)*sin(\psivec)},{\rvec*cos(\x)}) coordinate (BL);
-  \draw[proj]
-    plot[domain=0:90]({\rvec*sin(\x)*cos(\psivec+\dpsi)},{\rvec*sin(\x)*sin(\psivec+\dpsi)},{\rvec*cos(\x)}) coordinate (BR);
-  \draw[proj]
-    plot[domain=0:90]({\rvec*cos(\x)},{\rvec*sin(\x)},0);
-  \draw[proj] (O)  -- (BL); % PBxy
-  \draw[proj] (O)  -- (BR); % PBRxy
-  \draw[proj] (P)  -- (Pz);
-  \draw[proj] (PR)  -- (Pz) node[midway,above=-2,rotate=-24] {\contour{white}{$r\sin\theta$}};
-  
-  % AREA
-  \draw[area]
-    plot[domain=0:.99*\dpsi]({\rvec*sin(\thetavec)*cos(\psivec+\x)},{\rvec*sin(\thetavec)*sin(\psivec+\x)},{\rvec*cos(\thetavec)}) --
-    plot[domain=0:.99*\dtheta]({\rvec*sin(\thetavec+\x)*cos(\psivec+\dpsi)},{\rvec*sin(\thetavec+\x)*sin(\psivec+\dpsi)},{\rvec*cos(\thetavec+\x)}) --
-    plot[domain=.99*\dpsi:0]({\rvec*sin(\thetavec+\dtheta)*cos(\psivec+\x)},{\rvec*sin(\thetavec+\dtheta)*sin(\psivec+\x)},{\rvec*cos(\thetavec+\dtheta)}) --
-    plot[domain=.99*\dtheta:0]({\rvec*sin(\thetavec+\x)*cos(\psivec)},{\rvec*sin(\thetavec+\x)*sin(\psivec)},{\rvec*cos(\thetavec+\x)}) --
-    cycle;
-    
-  % MEASURES;
-  \draw[<->,proj,thin]
-    plot[domain=0:\dpsi]({\rvec*sin(\thetavec+1.11*\dtheta)*cos(\psivec+\x)},{\rvec*sin(\thetavec+1.11*\dtheta)*sin(\psivec+\x)},{\rvec*cos(\thetavec+1.11*\dtheta)})
-    node[right=12,below] {\contour{white}{$r\sin\theta\dd{\psi}$}};
-  \draw[<->,proj,thin]
-    plot[domain=0:\dtheta]({\rvec*sin(\thetavec+\x)*cos(\psivec+1.15*\dpsi)},{\rvec*sin(\thetavec+\x)*sin(\psivec+1.15*\dpsi)},{\rvec*cos(\thetavec+\x)}) 
-    node[above=11,right=-3] {$r\dd{\theta}$};
-    
-  % ANGLES
-  \tdplotdrawarc[->]{(O)}{0.35*\rvec}{0}{\psivec}
-    {below=-2}{$\psi$}
-  \tdplotdrawarc[->]{(O)}{0.45*\rvec}{\psivec}{\psivec+\dpsi}
-    {anchor=145,inner sep=1}{\contour{white}{$\dd{\psi}$}}
-  \tdplotsetthetaplanecoords{\psivec}
-  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.36*\rvec}{0}{\thetavec}
-    {right=2,above=-1}{$\theta$}
-  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.54*\rvec}{\thetavec}{\thetavec+\dtheta}
-    {left=0.2,above right=-2}{\contour{white}{$\dd{\theta}$}}
-  
-\end{tikzpicture}
-}
-
-    \caption{}
-    \label{fig:elm}
- \end{subfigure}
-
-    \caption{(a) ,(b)}
-\end{figure}
+Figure \ref{fig:elm} introduces the concept of discretizing the Earth's surface into small areas, represented by differential changes ($d\theta, d\psi$). In the MATLAB simulation, this discretization is crucial for modeling how different regions on the Earth's surface interact with solar radiation. Each discrete element can be associated with latitude and longitude intervals, allowing us to calculate the varying solar input across the Earth.
 
 
+\input{images/fig1}
 
 
 
 
 \subsection{Dynamics and Celestial Mechanics}
- 
-
 \paragraph{\ac{IFR}} 
 The \ac{IFR} is fixed with respect to the sun, where the origin of the axes is the center of the sun. This \ac{IFR} is defined by three unit vectors $\vec{i}, \vec{j}, \vec{k}$ as shown in Figure \ref{fig:ifr}. $\vec{k}$ is normal to the paper and pointing out.
 
- 
-\begin{figure}[h]
- 
-\centering
-\begin{tikzpicture}[>=latex, decoration={markings, mark=at position 0.5 with {\arrow{>}}}]
-    % Coordinates
-    \coordinate (sun) at (0,0);
-    \coordinate (earth) at (8,2);
-    \coordinate (sat) at (9,5);
-    \coordinate (A) at (-1,1);
-    \coordinate (B) at (8,1);
-    \coordinate (C) at (9,5.5);
-    
-    % Earth
-    \draw[thick, fill=yellow!50!red, draw=yellow!80!red] (sun) circle (1);
-    % Text
-    \node (a) at (A) {Sun};
-
-    % Earth
-    \draw[thick, fill=blue!20!white, draw=blue] (earth) circle (0.5);
-    % Text
-    \node (b) at (B) {Earth};
-    
-    % Moon
-    \node[circle, inner sep=1.5pt, outer sep=2pt, fill=black!30] (MOON) at (sat) {};
-    % Text 
-    \node (c) at (C) {Sat};
-    
-    % Lines
-    \draw[-latex, postaction={decorate}] (sun) -- (earth) node[pos=.55, below left] {$\vec{V}_{1}$};
-    \draw[dashed, -latex, postaction={decorate}] (earth) -- (sat) node[pos=.75, below right] {$\vec{V_2}$};
-    \draw[dashed, -latex, postaction={decorate}] (sun) -- (sat) node[pos=.55, below right] {$\vec{V_3}$}; 
-    
-    % Angles
-    \draw[->] (sun) ++(0:1.5) arc (0:15:1.5) node[midway, right] {$\psi_1$};
-    \draw[->] (earth) ++(0:0.6) arc (0:60:0.6) node[midway, right] {$\psi_2$};
-    
-    % Point
-    \draw[fill=black] (sun) circle (1pt) node[below, shift={(0,-0.1)}] {$\mathrm{O}$};
-
-    % X and Y axes
-    \draw[-latex] (-1,0) -- (10,0) node[below right] {$x$};
-    \draw[-latex] (0,-1) -- (0,3) node[above left] {$y$};
-    % i and j axes
-    \draw[-latex] (0,0) -- (1,0) node[below right] {$i$};
-    \draw[-latex] (0,0) -- (0,1) node[above left] {$j$};
-\end{tikzpicture}
-\caption{\ac{IFR} and vector position of the Earth, and satellite}
-\label{fig:ifr}
-\end{figure}
-
-
- 
+ \input{images/fig2}
  
 \paragraph{Position vector of the earth w.r.t the sun ($\vec{V_1(\psi_1)}$),}
 
@@ -441,43 +261,14 @@ It is evident from geometry of Figure \ref{fig:ifr} that,
 \paragraph{Orbital Elements}
 
 
-Two-body problem solution of earth-sun system\cite{fortescue2011spacecraft}.  
+Two-body problem solution of earth-sun system\cite{fortescue2011spacecraft}.
  
 
-In this project, the time will be considered as the dependent variable. Thus, the independent variable should be calculated as follows;
+In this project, time will be considered as the dependent variable. Thus, the independent variable should be calculated as follows:
 
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}
-% draw rectangle node
-	\node[draw,
-		minimum width=2cm,
-		minimum height=1cm,
-		align=center,
-		text width=2cm] at (0,0) {Time $t$};
-	\node[draw,
-		minimum width=2cm,
-		minimum height=1cm,
-		align=center,
-		text width=2cm] at (3,0) {M};
-	\node[draw,
-		minimum width=2cm,
-		minimum height=1cm,
-		align=center,
-		text width=2cm] at (6,0) {E};
-	\node[draw,
-		minimum width=2cm,
-		minimum height=1cm,
-		align=center,
-		text width=2cm] at (9,0) {$\psi$};
 
-    \draw[-latex] (1,0) -- (2,0);
-    \draw[-latex] (4,0) -- (5,0);
-    \draw[-latex] (7,0) -- (8,0);
-\end{tikzpicture}
-\caption{Time to State Transition}
-\label{fig:2}
-\end{figure}
+\input{images/fig3}
+
 
 According to the sequence in Figure \ref{fig:2}, the angular position ($\psi$) of the orbital objects could be calculated as a function of a given time (t).
 
@@ -502,136 +293,33 @@ The periodic time ($\tau$),
 
 
 \subsection{Thermal Models}
-
-\paragraph{Solar radiation,} The solar is emitting a constant amount of radiation power ($P$) equals \SI{3.856e26}{\watt}. The Solar radiation flux of a point at a distance ($d$) from the center of the earth could be calculated according to Equation \ref{eq:solarflux}.
+\paragraph{Solar radiation,} The Sun is emitting a constant amount of radiation power ($P$) equal \SI{3.856e26}{\watt}. The solar radiation flux of a point at a distance ($d$) from the center of the earth could be calculated according to Equation \ref{eq:solarflux}.
 
 \begin{equation} \label{eq:solarflux}
     J_s = \frac{Ps}{4\pi d^2}
 \end{equation}
 
+\input{images/fig4}
 
 
-\begin{figure}[h]
- 
-\centering
-\begin{tikzpicture}[>=latex, decoration={markings, mark=at position 0.5 with {\arrow{>}}}]
-    % Coordinates
-    \coordinate (sun) at (0,0);
-    \coordinate (earth) at (8,2);
-    \coordinate (sat) at (9,5);
-    \coordinate (A) at (-1,1);
-    \coordinate (B) at (8,1);
-    \coordinate (C) at (9,5.5);
-    
-    % Earth
-    \draw[thick, fill=yellow!50!red, draw=yellow!80!red] (sun) circle (1);
-    % Text
-    \node (a) at (A) {Sun};
 
-    % Earth
-    \draw[thick, fill=blue!20!white, draw=blue] (earth) circle (0.5);
-    % Text
-    \node (b) at (B) {Earth};
-    
-    % Moon
-    \node[circle, inner sep=1.5pt, outer sep=2pt, fill=black!30] (MOON) at (sat) {};
-    % Text 
-    \node (c) at (C) {Sat};
-    
-    % Lines
-    % \draw[-latex, postaction={decorate}] (sun) -- (earth) node[pos=.55, below left] {$\vec{V}_{1}$};
-    \draw[dashed, -latex, postaction={decorate},blue,thick] (earth) -- (sat) node[pos=.75, below right] {\textcolor{blue}{Planetary radiation}};
-    \draw[dashed, -latex, postaction={decorate},red,thick] (sun) -- (sat) node[pos=.35, above left] {\textcolor{red}{Solar radiation}}; 
-    \draw[dashed, -latex, postaction={decorate},yellow!90!black,thick] (sun) -- (7.5,2.5) node[pos=.5, below right] {\textcolor{yellow!90!black}{Albedo radiation}}; 
-    \draw[dashed, -latex, postaction={decorate},yellow!90!black,thick] (7.5,2.5) -- (sat) node[pos=.5, below right] {}; 
-    
-    % Angles
-    % \draw[->] (sun) ++(0:1.5) arc (0:15:1.5) node[midway, right] {$\psi_1$};
-    % \draw[->] (earth) ++(0:0.6) arc (0:60:0.6) node[midway, right] {$\psi_2$};
-    
-    % Point
-    \draw[fill=black] (sun) circle (1pt) node[below, shift={(0,-0.1)}] {$\mathrm{O}$};
-
-    % X and Y axes
-    \draw[-latex] (-1,0) -- (10,0) node[below right] {$x$};
-    \draw[-latex] (0,-1) -- (0,3) node[above left] {$y$};
-    % i and j axes
-    \draw[-latex] (0,0) -- (1,0) node[below right] {$i$};
-    \draw[-latex] (0,0) -- (0,1) node[above left] {$j$};
-\end{tikzpicture}
-\caption{Radiation Modes}
-\label{fig:}
-\end{figure}
+The relative motion between the three components—the sun, earth, and satellite—provides the possibility of eclipse conditions, in which the satellite will be outside the visible region of the sun. Consequently, the direct solar radiation will not arrive at the satellite. This case can be captured in the simulation by defining a certain condition that can determine whether the satellite is in an eclipse quantitatively. Equation \ref{eq:psi13} provides the proposed mathematical concept, which is calculated each time step to determine if there is a direct contribution from the sun radiation. Simply stated, does the satellite pass through the field of view \ac{FOV} of the sun?
 
 
-The relative motion motion between the three components sun, earth, and satellite provides the possibility of eclipse conditions, in which the the satellite will be outside the visible region by the sun. Consequently, the direct solar radiation will not arrive the satellite. This case can be captured in the simulation by defining a certain condition that can decide if the satellite in eclipse quantiivly. Equation \ref{eq:psi13
-} provides the proposed mathematical concept which is calculated each time step to determine if there is a direct contribution from the sun radiation.
+\input{images/fig5}
 
-\begin{figure}[h]
- 
-\centering
-\begin{tikzpicture}[>=latex, decoration={markings, mark=at position 0.5 with {\arrow{>}}}]
-    % Coordinates
-    \coordinate (sun) at (0,0);
-    \coordinate (earth) at (8,1);
-    \coordinate (sat) at (9,3);
-    \coordinate (A) at (-1,1);
-    \coordinate (B) at (8,-0.5);
-    \coordinate (C) at (9,3.5);
-    
-    % Earth
-    \draw[thick, fill=yellow!50!red, draw=yellow!80!red] (sun) circle (1);
-    % Text
-    \node (a) at (A) {Sun};
-
-    % Earth
-    \draw[thick, fill=blue!20!white, draw=blue] (earth) circle (1);
-    % Text
-    \node (b) at (B) {Earth};
-    
-    % Moon
-    \node[circle, inner sep=1.5pt, outer sep=2pt, fill=black!30] (MOON) at (sat) {};
-    % Text 
-    \node (c) at (C) {Sat};
-    
-    % Lines
-    \draw[-latex, postaction={decorate}] (sun) -- (earth) node[pos=.55, below left] {$\vec{V}_{1}$};
-    \draw[dashed, -latex, postaction={decorate}] (earth) -- (sat) node[pos=.75, below right] {$\vec{V_2}$};
-    \draw[dashed, -latex, postaction={decorate}] (sun) -- (sat) node[pos=.55, above left] {$\vec{V_3}$}; 
-    \draw[dashed, -latex, postaction={decorate},draw=red] (sun) -- (7.8,1.95) node[pos=.55, below right] {};  
-    \draw[dashed, -latex, postaction={decorate},draw=red] (earth) -- (7.8,1.95) node[pos=.55, below right] {}; 
-
-    
-    % Angles
-    \draw[->] (sun) ++(7:2.5) arc (5:18:2.5) node[midway, right] {$\psi_{13}$};
-    \draw[->, ,draw=red] (sun) ++(7:3.8) arc (5:12:3.8) node[midway, right, shift={(0,0.15)}] {\textcolor{red}{$\psi_{min}=\SI{0.5}{\degree}$}};
-    % \dra1[->] (earth) ++(0:0.6) arc (0:60:0.6) node[midway, right] {$\psi_{min}$};
-    
-    % Point
-    \draw[fill=black] (sun) circle (1pt) node[below, shift={(0,-0.1)}] {$\mathrm{O}$};
-
-    % X and Y axes
-    \draw[-latex] (-1,0) -- (10,0) node[below right] {$x$};
-    \draw[-latex] (0,-1) -- (0,3) node[above left] {$y$};
-    % i and j axes
-    \draw[-latex] (0,0) -- (1,0) node[below right] {$i$};
-    \draw[-latex] (0,0) -- (0,1) node[above left] {$j$};
-\end{tikzpicture}
-\caption{Layout of a Critical Eclipse Condition w.r.t $\psi_{min}$}
-\label{fig:}
-\end{figure}
 
 \begin{equation}\label{eq:psi13}
-    \psi_{13} = \frac{\vec{V}_1\cdot \vec{V}_3}{\norm{\vec{V}_1}\norm{\vec{V}_3}}
+    \psi_{13} = \arccos{\frac{\vec{V}_1\cdot \vec{V}_3}{\norm{\vec{V}_1}\norm{\vec{V}_3}}}
 \end{equation}
 
 \paragraph{Albedo radiation} 
-The portion of solar radiation that bounces off a planet's surface and/or atmosphere. this fraction (a) is in range (0.31 - 0.39). 
+The portion of solar radiation that bounces off a planet's surface and/or atmosphere. This fraction (a) is in the range (0.31–0.39).
 \begin{equation}
     \delta Q_{r_{ij}} = I_{i0} dA_i\cos{\phi_i}\times\frac{dA_j \cos{\phi_j}}{d^2}
 \end{equation}
 
-Each place on the earth surface has different geometrical relations w.r.t the sun and satellite. Thus it's mandatory to discretize the earth into a mesh grid to be able to numerically integrate over the earth surface to compute the total absorbed radiation by albedo mode. the following algorithm is developed to compute the incident radiation from each element on the earth surface to the satellite, and sum all the earths elements contributions to get the total albedo radiation as described in Algorithm \ref{alg:01}.
+Each place on the Earth's surface has different geometrical relationships with respect to the sun and satellite. Thus, it's mandatory to discretize the Earth into a mesh grid to be able to numerically integrate over the Earth's surface to compute the total absorbed radiation by the albedo radiation. The following algorithm is developed to compute the incident radiation from each element on the Earth's surface to the satellite and sum all the Earth's contributions to get the total albedo radiation as described in Algorithm \ref{alg:01}.
 
 
 
@@ -663,61 +351,16 @@ $\vec{V}_{sat/elm} \gets$ Position vector of satellite/element\;
 \begin{equation}
     \vec{V}_{elm/sat} = \vec{V}_{2} - \vec{V}_{elm}
 \end{equation}
+\input{images/fig6}
 
-\begin{figure}[h]
- 
-\centering
-\begin{tikzpicture}[>=latex, decoration={markings, mark=at position 0.5 with {\arrow{>}}}]
-    % Coordinates
-    \coordinate (earth) at (0,0);
-    \coordinate (sat) at (2,3);
-    \coordinate (A) at (-1,1);
-    \coordinate (B) at (0,-1.5);
-    \coordinate (C) at (2,3.5);
-    
-
-
-    % Earth
-    \draw[thick, fill=blue!20!white, draw=blue] (earth) circle (1);
-    % Text
-    \node (b) at (B) {Earth};
-    
-    % Moon
-    \node[circle, inner sep=1.5pt, outer sep=2pt, fill=black!30] (MOON) at (sat) {};
-    % Text 
-    \node (c) at (C) {Sat};
-    
-    % Lines
-    % \draw[-latex, postaction={decorate}] (sun) -- (earth) node[pos=.55, below left] {$\vec{V}_{1}$};
-    \draw[dashed, -latex, postaction={decorate},green,thick] (earth) -- (sat) node[pos=.60, below right] {\textcolor{green}{$\vec{V_2}$}};
-    \draw[dashed, -latex, postaction={decorate},yellow!30!blue,thick] ({cos(135)},{sin(135}) -- (sat) node[pos=.4, above left] {\textcolor{yellow!30!blue}{$\vec{V}_{sat/elm}$}}; 
-    \draw[dashed, -latex, postaction={decorate},yellow!50!red,thick] (0,0) --  ({cos(135)},{sin(135}) node[pos=.5,  left] {\textcolor{yellow!50!red}{$\vec{V}_{elm}$}}; 
-
-    % Point
-    \draw[fill=yellow!10!red, draw=yellow!10!red] ({cos(135)},{sin(135}) circle (2pt) node[left, shift={(-0.,0)}] {\textcolor{yellow!10!red}{$\mathrm{element}$}};
-    % Point
-    \draw[fill=yellow!50!red] (sun) circle (1pt) node[below, shift={(0,-0.1)}] {$\mathrm{O}$};
-
-    % X and Y axes
-    \draw[-latex] (-1,0) -- (4,0) node[below right] {$x$};
-    \draw[-latex] (0,-1) -- (0,3) node[above left] {$y$};
-    % i and j axes
-    \draw[-latex] (0,0) -- (1,0) node[below right] {$i$};
-    \draw[-latex] (0,0) -- (0,1) node[above left] {$j$};
-\end{tikzpicture}
-\caption{Position Vector of the Elements on Earth Surface}
-\label{fig:}
-\end{figure}
-
-
-\paragraph{Planetary radiation,} the Earth's temperature drives the planet to emit a radiation power that is proportional to the quadratic of the temperature as shown in Equation \ref{eq:palnet_rad}. 
+\paragraph{Planetary radiation,} the Earth's temperature drives the planet to emit a radiation power that is proportional to the quadratic of the temperature as shown in Equation \ref{eq:palnet_rad}.
 
 \begin{equation}\label{eq:palnet_rad}
     Q_p = \varepsilon \sigma T^4
 \end{equation}
 
 
-\paragraph{Energy balance,} the satellite is represented as a node with temperature ($T_{sat}$). Accordingly, the satellite emits a radiation power as shown in Equation \ref{eq:sat_rad}
+\paragraph{Energy Balance,} the satellite is represented as a node with temperature ($T_{sat}$). Accordingly, the satellite emits a radiation power as shown in Equation \ref{eq:sat_rad}
 
 \begin{equation}\label{eq:sat_rad}
     J_{\text {radiated }} = \varepsilon \sigma T^4
@@ -744,7 +387,7 @@ T^4=\frac{A_\alpha}{A_{\varepsilon}} \frac{J_{\text {incident }}}{\sigma}\left(\
 T^4=\frac{Q}{A_{t o t}(\sigma \varepsilon)}+\frac{J_p A_p}{A_{t o t} \sigma}+\left(\frac{J_s A_s+J_a A_a}{A_{t o t} \sigma}\right) \frac{\alpha}{\varepsilon}
 \end{equation}
 
-Q: is the generated heat due to the satellite systems.
+Q: Generated heat due to the satellite subsystems.
 
 
  
@@ -754,7 +397,7 @@ Q: is the generated heat due to the satellite systems.
 
 \subsection{Sensitivity Analysis}
 
-A convergence study is performed to monitor the simulation performance versus the number of elements. The earth surface were divided into number of elements in longitude and latitude direction equally. the simulation were performed on a set of number of elements (10, 20, 40, and 80). Figure \ref{fig:ss} shows the sensitivity study, considering the absorbed radiation and the satellite temperature as probe. those two values converge at number of elements of 40 elements in longitude and latitude, leading to $1600$ $(40\times40)$ elements in total. According to this study the number of elements is fixed at 40 elements in both directions for the following simulations.
+To track the relationship between the number of elements and the simulation performance, a convergence study is conducted. The Earth's surface was uniformly partitioned into various components along the longitude and latitude axes. With regard to a set of elements (10, 20, 40, and 80), the simulation was executed. Figure \ref{fig:ss} shows the sensitivity study, considering the absorbed radiation and the satellite temperature as probes. Those two values converge at the number of elements of 40 in both the longitude and latitude directions, leading to $1600$ $(40\times40)$ elements in total. According to this study, the number of elements is fixed at 40 in both directions for the following simulations.
 
 \begin{figure}[h]
     \centering
@@ -772,7 +415,7 @@ A convergence study is performed to monitor the simulation performance versus th
     \label{fig:ss}
 \end{figure}
 
-\paragraph{Direct solar radiation on the earth surface,} to test the code performance, each component of the code is tested separately. Thus, the direct radiation from the sun to the earth is computed for each element on the earth surface. Figure \ref{fig:solar-rad-on-earth} shows the incident radiation on the earth surface which depends on how far is this point from the sun. The change in the distance (d) of each element on the earth from the sun is very small. Thus, it is expected to get very small differences in the incident radiation power as evident from the figure where the maximum value and the minimum value are\textcolor{red}{ X , and Y} respectively. 
+\paragraph{Direct solar radiation on the earth surface,} To test the code's performance, each component of the code is tested separately. Thus, the direct radiation from the sun to the earth is computed for each element on the earth's surface. Figure \ref{fig:solar-rad-on-earth} shows the incident radiation on the earth surface, which depends on how far this point is from the sun. The change in the distance (d) of each element on the earth from the sun is very small. Thus, it is expected to get very small differences in the incident radiation power, as evident from the figure where the maximum value and the minimum value are~\textcolor{red}{ X and Y}, respectively.
 
  
 \begin{figure}[h]
@@ -791,7 +434,7 @@ A convergence study is performed to monitor the simulation performance versus th
 \end{figure}
 
 
-The incident solar radiation on the earth is reflected to the universe, portion of this radiation is intercepted by the satellite which represents the albedo radiation. Figure \ref{fig:albedo} elucidates the contribution of each element in the earth surface to the satellite absorbed radiation. It's evident from the figure that the angle between the two surfaces directly influence the amount of contribution. Furthermore, the half side of the earth that is far from the sun does not contribute to the albedo radiation absolutely which provides a good validation case for our simulation framework. 
+The satellite collects albedo radiation, which is a portion of the incident solar radiation that the earth's surface reflects into space. Figure \ref{fig:albedo} elucidates the contribution of each element on the earth's surface to the satellite-absorbed radiation. It's evident from the figure that the angle between the two surfaces directly influences the amount of contribution. Furthermore, the half-side of the earth that is far from the sun does not contribute to the albedo radiation, which provides a good validation case for our simulation framework.
 
  \newpage
 
@@ -843,7 +486,11 @@ FOR EACH MATERIAL (EXCEPT ANIMATIONS)
 
 \newpage
 \section{Discussion} %MSF&IZ
-\indent
+\indent The aforementioned results provide confirmation for the hypothesis that the power assimilated by the satellite diminishes throughout eclipse phases. This phenomenon occurs because albedo and solar radiation are absent during eclipse phases. According to the simulations (refer to figure \ref{fig:temptime}), the satellite completes one revolution around the Earth every 128 minutes, with an eclipse occurring for half of each period. The previously mentioned variation induces a recurring pattern of fluctuations in the overall incident radiation reaching the satellite. This ultimately leads to the recurrence of the effect cycle on the satellite's temperature. As a result of this variation, the satellite constantly oscillates within the temperature range of 205 to 290K. While the temperature range mentioned may not be optimal, it is worth noting that the typical temperature variation for a satellite in Low Earth Orbit (LEO) is between -150 and 60 degrees Celsius \cite{iles2004photovoltaic}. Consequently, this report's results and methodology are validated.
+
+\indent The simulation was executed using different value of $\frac{\alpha}{\epsilon}$, to analyse the effect of different materials on the temperature. It was found that 
+
+
 
 \newpage
 \section{Conclusion} MSF
@@ -874,7 +521,7 @@ FOR EACH MATERIAL (EXCEPT ANIMATIONS)
 
 
 
-
+\textcolor{red}{please, add the used constants and abbreviations}
 
 
 \printnomenclature

@@ -415,18 +415,18 @@ To track the relationship between the number of elements and the simulation perf
     \label{fig:ss}
 \end{figure}
 
-\paragraph{Direct solar radiation on the earth surface,} To test the code's performance, each component of the code is tested separately. Thus, the direct radiation from the sun to the earth is computed for each element on the earth's surface. Figure \ref{fig:solar-rad-on-earth} shows the incident radiation on the earth surface, which depends on how far this point is from the sun. The change in the distance (d) of each element on the earth from the sun is very small. Thus, it is expected to get very small differences in the incident radiation power, as evident from the figure where the maximum value and the minimum value are~\textcolor{red}{ X and Y}, respectively.
+\paragraph{Direct solar radiation on the earth surface,} To test the code's performance, each component of the code is tested separately. Thus, the direct radiation from the sun to the earth is computed for each element on the earth's surface. Figure \ref{fig:solar-rad-on-earth} shows the incident radiation on the earth surface, which depends on how far this point is from the sun. The change in the distance (d) of each element on the earth from the sun is very small. Thus, it is expected to get very small differences in the incident radiation power, as evident from the figure where the maximum value and the minimum value are~\textcolor{red}{ X and Y}, respectively. The maximum value of absorbed radiation power reaches just above \SI{6000}{\watt}, the reason is that the area of the satellite is assumed to be \SI{100}{\meter\squared}, so this value is the accumulation of the radiation flux over this area. 
 
  
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{Matlab/images/inc_sun_rad.png}
+        \includegraphics[width=\textwidth]{Matlab/images/WhitePaint_silicone/inc_sun_rad.png}
         \caption{}
         \label{fig:solar-rad-on-earth}
     \end{subfigure}
     \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{Matlab/images/albedo_elements.png}
+        \includegraphics[width=\textwidth]{Matlab/images/WhitePaint_silicone/albedo_elements.png}
         \caption{}
         \label{fig:albedo}
     \end{subfigure}
@@ -447,21 +447,41 @@ text
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{1\textwidth}
-        \includegraphics[width=\textwidth]{Matlab/images/temp_time.png}
+        \includegraphics[width=\textwidth]{Matlab/images/WhitePaint_silicone/temp_time.png}
         \caption{}
         \label{fig:temptime}
     \end{subfigure}
     \begin{subfigure}[b]{1\textwidth}
-        \includegraphics[width=\textwidth]{Matlab/images/QQQ_time.png}
+        \includegraphics[width=\textwidth]{Matlab/images/WhitePaint_silicone/QQQ_time.png}
         \caption{}
         \label{fig:temptime}
     \end{subfigure}
     \begin{subfigure}[b]{1\textwidth}
-        \includegraphics[width=\textwidth]{Matlab/images/Q_time.png}
+        \includegraphics[width=\textwidth]{Matlab/images/WhitePaint_silicone/Q_time.png}
         \caption{}
         \label{fig:temptime}
     \end{subfigure}
-    \caption{(a) Temperature variation, (b) radiation power variation, and (c) Total incident traditional power to the satellite over time}
+    \caption{(a) Temperature variation, (b) radiation power variation, and (c) Total incident radiation power to the satellite over time of white paint (silicone) case, $\alpha=0.26, \varepsilon = 0.83$}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\textwidth]{Matlab/images/WhitePaint_silicate/temp_time.png}
+        \caption{}
+        \label{fig:temptime}
+    \end{subfigure}
+    \begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\textwidth]{Matlab/images/WhitePaint_silicate/QQQ_time.png}
+        \caption{}
+        \label{fig:temptime}
+    \end{subfigure}
+    \begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\textwidth]{Matlab/images/WhitePaint_silicate/Q_time.png}
+        \caption{}
+        \label{fig:temptime}
+    \end{subfigure}
+    \caption{(a) Temperature variation, (b) radiation power variation, and (c) Total incident radiation power to the satellite over time of white paint (silicate) case, $\alpha=0.12, \varepsilon = 0.90$}
 \end{figure}
 
 

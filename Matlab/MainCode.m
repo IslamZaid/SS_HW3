@@ -36,17 +36,17 @@ a = 0.39;           % fraction of solar radiation reflected from earth. the aver
 % Satellite data
 r_sat_ear = 6.371e+6 + 2e+6;   % Satellite distance to the center of the earth (m)
 area_sat = 100;     % Satelite Area (m^2)
-alpha = 0.12;       % absorptance
-eps = 0.90;          % Emmitance 
+alpha = 0.40;       % absorptance
+eps = 0.63;          % Emmitance 
 ae = alpha/eps;     % (alpha/eps)
 
 
 % Please you the path in accordance with alpha and eps values (((IMPORTANT)))
 % path_img = 'images/WhitePaint_silicone' ;         % alpha = 0.26 , esp = 0.83
 % path_img = 'images/WhitePaint_silicone_1000h' ;  % alpha = 0.29 , esp = 0.83
-path_img = 'images/WhitePaint_silicate' ;        % alpha = 0.12 , esp = 0.90       
+% path_img = 'images/WhitePaint_silicate' ;        % alpha = 0.12 , esp = 0.90       
 % path_img = 'images/WhitePaint_silicate_1000h' ;  % alpha = 0.14 , esp = 0.90         
-% path_img = 'images/Aluminized_kapton' ;          % alpha = 0.40 , esp = 0.63         
+path_img = 'images/Aluminized_kapton' ;          % alpha = 0.40 , esp = 0.63         
 if ~exist(path_img, 'dir')           
    mkdir(path_img)
 end
@@ -57,7 +57,7 @@ st = 0;
 X = r_ear * X;
 Y = r_ear * Y;
 Z = r_ear * Z;
-
+    
 centerNodes = zeros([size(X), 4]); % First column for labels, forth column for lateral surface areas
 
 Area = zeros(numNodes);
@@ -110,7 +110,7 @@ A_sat = @(beta_sat_ear)  area_sat * unit_vector_normalto_sat(beta_sat_ear);    %
 
 % calculations
 n_earth = 2*pi/totaltime;                           %earth rotations around the sun (rad/s)
-peiod_sat = 2*pi*sqrt(r_sat_ear^3/mu);              % satellite period around the earth (s)
+period_sat = 2*pi*sqrt(r_sat_ear^3/mu);              % satellite period around the earth (s)
 
 % declare matrices where the data will be recorded
 I_mat = zeros(numsteps,numNodes+1,numNodes+1);      % incident intensity of the soalr radiation on the earth (w/m^2)
@@ -130,7 +130,7 @@ parfor step = 1: numsteps
     b_ear_sun  = M+(2*e-0.25*e^3)*sin(M)+(5/4)*e^2*sin(2*M)+(13/12)*e^3*sin(3*M); % the angular posion of the earth wrt sun (rad)
     r = (h^2/mu)/(1+e*cos(b_ear_sun));              % earth to sun distance (m)
     r_EarToSun(step) = r;                           % list of earth to sun distance (m)
-    b_sat_ear = 2*pi*t / peiod_sat;                 % the angular posion of the satellte wrt earth (rad)
+    b_sat_ear = 2*pi*t / period_sat;                 % the angular posion of the satellte wrt earth (rad)
 
     % 1- Sun Model
     Q_sun = sun_model(r,r_ear,R_ear_sun(r,b_ear_sun),R_sat_sun(r,b_ear_sun, b_sat_ear), A_sat(b_ear_sun),Ps);
@@ -294,14 +294,17 @@ xlabel("Time (hours)")
 ylabel("Temperature (K)")
 xticks(0:6*60:24*60)
 xticklabels(0:6:24) 
+% ylim([170 300])
  subplot(1,3,3) 
-plot(Temp(1 : peiod_sat/60), 'LineWidth',2)
+plot(Temp(1 : period_sat/60), 'LineWidth',2)
 title("Temperature - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:2*60)
 xticklabels(0:0.5:2)
 grid on 
 grid minor 
+% ylim([170 300])
+
 fontsize(gcf,16,"points")
 
 
@@ -324,10 +327,10 @@ xticks(0:6*60:24*60)
 xticklabels(0:6:24)  
 
 subplot(1,3,3) 
-plot(Q_A_mat( 1:peiod_sat/60), 'LineWidth',2)
+plot(Q_A_mat( 1:period_sat/60), 'LineWidth',2)
 hold on
-plot(Q_sun_mat(1:peiod_sat/60), 'LineWidth',2)
-plot(Q_p_mat(1:peiod_sat/60), 'LineWidth',2)
+plot(Q_sun_mat(1:period_sat/60), 'LineWidth',2)
+plot(Q_p_mat(1:period_sat/60), 'LineWidth',2)
 title("Radiation - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:60*24/60)
@@ -352,7 +355,7 @@ ylabel("Radiation power (w)")
 xticks(0:6*60:24*60)
 xticklabels(0:6:24) 
  subplot(1,3,3) 
-plot(Q_tot(1:peiod_sat/60  ), 'LineWidth',2)
+plot(Q_tot(1:period_sat/60  ), 'LineWidth',2)
 title("Total radiation - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:2*60)

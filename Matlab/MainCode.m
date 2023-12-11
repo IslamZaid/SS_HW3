@@ -36,17 +36,17 @@ a = 0.39;           % fraction of solar radiation reflected from earth. the aver
 % Satellite data
 r_sat_ear = 6.371e+6 + 2e+6;   % Satellite distance to the center of the earth (m)
 area_sat = 100;     % Satelite Area (m^2)
-alpha = 0.40;       % absorptance
-eps = 0.63;          % Emmitance 
+alpha = 0.26;       % absorptance
+eps = 0.83;          % Emmitance 
 ae = alpha/eps;     % (alpha/eps)
 
 
 % Please you the path in accordance with alpha and eps values (((IMPORTANT)))
-% path_img = 'images/WhitePaint_silicone' ;         % alpha = 0.26 , esp = 0.83
+path_img = 'images/WhitePaint_silicone' ;         % alpha = 0.26 , esp = 0.83
 % path_img = 'images/WhitePaint_silicone_1000h' ;  % alpha = 0.29 , esp = 0.83
 % path_img = 'images/WhitePaint_silicate' ;        % alpha = 0.12 , esp = 0.90       
 % path_img = 'images/WhitePaint_silicate_1000h' ;  % alpha = 0.14 , esp = 0.90         
-path_img = 'images/Aluminized_kapton' ;          % alpha = 0.40 , esp = 0.63         
+% path_img = 'images/Aluminized_kapton' ;          % alpha = 0.40 , esp = 0.63         
 if ~exist(path_img, 'dir')           
    mkdir(path_img)
 end

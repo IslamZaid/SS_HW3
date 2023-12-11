@@ -1,8 +1,8 @@
 clc;
 close all;
 clear all;
-%% 
 
+%% Constants
 e = 0.0167;
 G = 6.6371e-11; % Gravitational Constant in m^3/kg*s^2
 mass_earth = 5.97e24; % in kg
@@ -11,13 +11,18 @@ a_SMA = 1.49e11;   % semi-major axis (m)
 h = sqrt( mu * a_SMA * (1-e^2) ) ;   % kg.m^2/s
 
 
+% Number of nodes
+numNodes = 40;    % number of eleemtns in longitue and lattitde
 
-% Satellite data
-alpha = 0.12;       % absorptance
-eps = 0.90;          % Emmitance 
-ae = alpha/eps;     % (alpha/eps)
-r_sat_ear = 6.371e+6 + 2e+6;   % Satellite distance to the center of the earth (m)
-area_sat = 100;     % Satelite Area (m^2)
+
+% time incremintation 
+totaltime = 3.154e7; % Total simulation time (1 year in s)
+time_steps = 0 :60 : totaltime ;
+numsteps=length(time_steps);
+
+
+% Sun data 
+Ps = 3.856*10^26;   % Total emmited power from the sun (w) 
 
 
 % Earth data
@@ -27,25 +32,16 @@ T_p = 254;          % Earth temperature (K)
 r_ear = 6.371e+6;   % Earth radius (m)
 a = 0.39;           % fraction of solar radiation reflected from earth. the average varies from 0.31 to 0.39 
 
-% Sun data 
-Ps = 3.856*10^26;   % Total emmited power from the sun (w) 
+
+% Satellite data
+r_sat_ear = 6.371e+6 + 2e+6;   % Satellite distance to the center of the earth (m)
+area_sat = 100;     % Satelite Area (m^2)
+alpha = 0.12;       % absorptance
+eps = 0.90;          % Emmitance 
+ae = alpha/eps;     % (alpha/eps)
 
 
-
-
-
-% Number of nodes
-numNodes = 40;
-
-
-
-% time incremintation 
-totaltime = 3.154e7; % Total simulation time (1 year in s)
-time_steps = 0 :60 : totaltime ;
-numsteps=length(time_steps);
-
-
-%  paths
+% Please you the path in accordance with alpha and eps values (((IMPORTANT)))
 % path_img = 'images/WhitePaint_silicone' ;         % alpha = 0.26 , esp = 0.83
 % path_img = 'images/WhitePaint_silicone_1000h' ;  % alpha = 0.29 , esp = 0.83
 path_img = 'images/WhitePaint_silicate' ;        % alpha = 0.12 , esp = 0.90       
@@ -328,10 +324,10 @@ xticks(0:6*60:24*60)
 xticklabels(0:6:24)  
 
 subplot(1,3,3) 
-plot(Q_A_mat( 1:60*24), 'LineWidth',2)
+plot(Q_A_mat( 1:peiod_sat/60), 'LineWidth',2)
 hold on
-plot(Q_sun_mat(1:60*24), 'LineWidth',2)
-plot(Q_p_mat(1:60*24), 'LineWidth',2)
+plot(Q_sun_mat(1:peiod_sat/60), 'LineWidth',2)
+plot(Q_p_mat(1:peiod_sat/60), 'LineWidth',2)
 title("Radiation - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:60*24/60)
@@ -356,7 +352,7 @@ ylabel("Radiation power (w)")
 xticks(0:6*60:24*60)
 xticklabels(0:6:24) 
  subplot(1,3,3) 
-plot(Q_tot(1:peiod_sat  ), 'LineWidth',2)
+plot(Q_tot(1:peiod_sat/60  ), 'LineWidth',2)
 title("Total radiation - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:2*60)

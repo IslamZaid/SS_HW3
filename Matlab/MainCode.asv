@@ -1,8 +1,8 @@
 clc;
 close all;
 clear all;
-%% 
 
+%% Constants
 e = 0.0167;
 G = 6.6371e-11; % Gravitational Constant in m^3/kg*s^2
 mass_earth = 5.97e24; % in kg
@@ -11,13 +11,18 @@ a_SMA = 1.49e11;   % semi-major axis (m)
 h = sqrt( mu * a_SMA * (1-e^2) ) ;   % kg.m^2/s
 
 
+% Number of nodes
+numNodes = 40;   
 
-% Satellite data
-alpha = 0.26;       % absorptance
-eps = 0.83;          % Emmitance 
-ae = alpha/eps;     % (alpha/eps)
-r_sat_ear = 6.371e+6 + 2e+6;   % Satellite distance to the center of the earth (m)
-area_sat = 100;     % Satelite Area (m^2)
+
+% time incremintation 
+totaltime = 3.154e7; % Total simulation time (1 year in s)
+time_steps = 0 :60 : totaltime ;
+numsteps=length(time_steps);
+
+
+% Sun data 
+Ps = 3.856*10^26;   % Total emmited power from the sun (w) 
 
 
 % Earth data
@@ -27,28 +32,19 @@ T_p = 254;          % Earth temperature (K)
 r_ear = 6.371e+6;   % Earth radius (m)
 a = 0.39;           % fraction of solar radiation reflected from earth. the average varies from 0.31 to 0.39 
 
-% Sun data 
-Ps = 3.856*10^26;   % Total emmited power from the sun (w) 
+
+% Satellite data
+r_sat_ear = 6.371e+6 + 2e+6;   % Satellite distance to the center of the earth (m)
+area_sat = 100;     % Satelite Area (m^2)
+alpha = 0.12;       % absorptance
+eps = 0.90;          % Emmitance 
+ae = alpha/eps;     % (alpha/eps)
 
 
-
-
-
-% Number of nodes
-numNodes = 40;
-
-
-
-% time incremintation 
-totaltime = 3.154e7; % Total simulation time (1 year in s)
-time_steps = 0 :60 : totaltime ;
-numsteps=length(time_steps);
-
-
-%  paths
-path_img = 'images/WhitePaint_silicone' ;         % alpha = 0.26 , esp = 0.83
+% paths
+% path_img = 'images/WhitePaint_silicone' ;         % alpha = 0.26 , esp = 0.83
 % path_img = 'images/WhitePaint_silicone_1000h' ;  % alpha = 0.29 , esp = 0.83
-% path_img = 'images/WhitePaint_silicate' ;        % alpha = 0.12 , esp = 0.90       
+path_img = 'images/WhitePaint_silicate' ;        % alpha = 0.12 , esp = 0.90       
 % path_img = 'images/WhitePaint_silicate_1000h' ;  % alpha = 0.14 , esp = 0.90         
 % path_img = 'images/Aluminized_kapton' ;          % alpha = 0.40 , esp = 0.63         
 if ~exist(path_img, 'dir')           
@@ -57,7 +53,7 @@ end
 %% Sphere Model Development
 % Number of nodes
 st = 0;
-[X,Y,Z] = sphere(numNodes);
+[X,Y,Z] = sphere(numNodes);     % discretize the domain into sherical domain 
 X = r_ear * X;
 Y = r_ear * Y;
 Z = r_ear * Z;
@@ -78,7 +74,7 @@ for i = 1 : numNodes
         V2 = node3 - node1;
         V3 = node4 - node1;
 
-        Area(i,j) = 0.5 * ( norm(cross(V1,V2)) + norm(cross(V2,V3)) );
+        Area(i,j) = 0.5 * ( norm(cross(V1,V2)) + norm(cross(V2,V3)) );   % calculate the area of each element by dividing into two triangles
 
         % Save center node information
         centerNodes(i, j, :) = [  (X(i, j) + X(i, j+1) + X(i+1, j) + X(i+1, j+1)) / 4;
@@ -166,7 +162,7 @@ end
 
 
 %% plotting
-cond = 0;
+cond = 1;
 if cond == 1 
 
 if size(Q_mat,2) ~= size(Q_mat,3)
@@ -328,13 +324,13 @@ xticks(0:6*60:24*60)
 xticklabels(0:6:24)  
 
 subplot(1,3,3) 
-plot(Q_A_mat(0*60+1:60*2+1), 'LineWidth',2)
+plot(Q_A_mat( 1:60*24), 'LineWidth',2)
 hold on
-plot(Q_sun_mat(0*60+1:60*2+1), 'LineWidth',2)
-plot(Q_p_mat(0*60+1:60*2+1), 'LineWidth',2)
+plot(Q_sun_mat(1:60*24), 'LineWidth',2)
+plot(Q_p_mat(1:60*24), 'LineWidth',2)
 title("Radiation - one cycle")
 xlabel("Time (hours)")
-xticks(0:0.5*60:2*60)
+xticks(0:0.5*60:60*24/60)
 xticklabels(0:0.5:2)
 grid on 
 grid minor 
@@ -356,7 +352,7 @@ ylabel("Radiation power (w)")
 xticks(0:6*60:24*60)
 xticklabels(0:6:24) 
  subplot(1,3,3) 
-plot(Q_tot(0*60+1:60*2+1), 'LineWidth',2)
+plot(Q_tot(1:peiod_sat  ), 'LineWidth',2)
 title("Total radiation - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:2*60)
@@ -377,6 +373,8 @@ exportgraphics(f,[path_img,'/Q_time.png'], Resolution=1200);
 
 
 %% Initialize gif
+ccond = 0;
+if ccond == 1
 if size(Q_mat,2) ~= size(Q_mat,3)
     Q_mat(:,:,end+1) = Q_mat(:,:,end);
 end
@@ -527,6 +525,6 @@ for i = 1 :1000: numsteps
     exportgraphics(f,[path_img,'/r_earth.gif'],'Append',true);
 end
 
-
+end
 end
 

@@ -1,0 +1,119 @@
+\begin{figure}[h]
+ \centering
+ \begin{subfigure}[b]{0.48\textwidth}
+% 3D AXIS with spherical coordinates
+\tdplotsetmaincoords{60}{110}
+\resizebox{0.6\textwidth}{!}{
+\begin{tikzpicture}[scale=4,tdplot_main_coords]
+  
+  % VARIABLES
+  \def\rvec{.8}
+  \def\thetavec{30}
+  \def\psivec{60}
+  
+  % AXES
+  \coordinate (O) at (0,0,0);
+  \draw[thick,->] (0,0,0) -- (1,0,0) node[anchor=north east]{$x$};
+  \draw[thick,->] (0,0,0) -- (0,1,0) node[anchor=north west]{$y$};
+  \draw[thick,->] (0,0,0) -- (0,0,1) node[anchor=south]{$z$};
+  
+  % VECTORS
+  \tdplotsetcoord{P}{\rvec}{\thetavec}{\psivec}
+  \draw[vector,red] (O)  -- (P) node[above right=-2] {P};
+  \draw[dashed,myred]   (O)  -- (Pxy);
+  \draw[dashed,myred]   (P)  -- (Pxy);
+  \draw[dashed,myred]   (Py) -- (Pxy);
+  
+  % ARCS
+  \tdplotdrawarc[->]{(O)}{0.2}{0}{\psivec}
+    {anchor=north}{$\psi$}
+  \tdplotsetthetaplanecoords{\psivec}
+  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.4}{0}{\thetavec}
+    {anchor=south west}{\hspace{-1mm}$\theta$}
+
+\end{tikzpicture}
+}
+ \caption{}
+ \label{fig:pos}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.48\textwidth}
+% 3D AXIS with spherical coordinates, dA
+\tdplotsetmaincoords{60}{110}
+\resizebox{0.6\textwidth}{!}{
+\begin{tikzpicture}[scale=4,tdplot_main_coords]
+  
+  % VARIABLE
+  \def\rvec{1.0}
+  \def\thetavec{35}
+  \def\psivec{45}
+  \def\dtheta{10}
+  \def\dpsi{16}
+  \def\sphere#1#2#3{plot[domain=#1]({\rvec*sin(#2)*cos(#3)},{\rvec*sin(#2)*sin(#3)},{\rvec*cos(#2)})}
+  \contourlength{0.8pt}
+  
+  % AXES
+  \coordinate (O) at (0,0,0);
+  \draw[thick,->] (0,0,0) -- (1.16*\rvec,0,0) node[left=2,below]{$x$};
+  \draw[thick,->] (0,0,0) -- (0,1.1*\rvec,0) node[below=2,right=0]{$y$};
+  \draw[thick,->] (0,0,0) -- (0,0,1.1*\rvec) node[above]{$z$};
+  
+  % COORDINATES
+  \tdplotsetcoord{P}{\rvec}{\thetavec}{\psivec}
+  \tdplotsetcoord{PB}{\rvec}{\thetavec+\dtheta}{\psivec}
+  \tdplotsetcoord{PR}{\rvec}{\thetavec}{\psivec+\dpsi}
+  \tdplotsetcoord{PBR}{\rvec}{\thetavec+\dtheta}{\psivec+\dpsi}
+  
+  % CONE
+  \draw[veccol!20,very thin] (O)  -- (PBR);
+  \draw[veccol!20,very thin] (O)  -- (PR);
+  \draw[->,veccol] (O)  -- (P) node[below=5,left=2] {$\vb{r}$};
+  \draw[veccol,very thin] (O)  -- (PB);
+  
+  % PROJECTIONS
+  \draw[proj] %\thetavec+\dtheta
+    plot[domain=0:90]({\rvec*sin(\x)*cos(\psivec)},{\rvec*sin(\x)*sin(\psivec)},{\rvec*cos(\x)}) coordinate (BL);
+  \draw[proj]
+    plot[domain=0:90]({\rvec*sin(\x)*cos(\psivec+\dpsi)},{\rvec*sin(\x)*sin(\psivec+\dpsi)},{\rvec*cos(\x)}) coordinate (BR);
+  \draw[proj]
+    plot[domain=0:90]({\rvec*cos(\x)},{\rvec*sin(\x)},0);
+  \draw[proj] (O)  -- (BL); % PBxy
+  \draw[proj] (O)  -- (BR); % PBRxy
+  \draw[proj] (P)  -- (Pz);
+  \draw[proj] (PR)  -- (Pz) node[midway,above=-2,rotate=-24] {\contour{white}{$r\sin\theta$}};
+  
+  % AREA
+  \draw[area]
+    plot[domain=0:.99*\dpsi]({\rvec*sin(\thetavec)*cos(\psivec+\x)},{\rvec*sin(\thetavec)*sin(\psivec+\x)},{\rvec*cos(\thetavec)}) --
+    plot[domain=0:.99*\dtheta]({\rvec*sin(\thetavec+\x)*cos(\psivec+\dpsi)},{\rvec*sin(\thetavec+\x)*sin(\psivec+\dpsi)},{\rvec*cos(\thetavec+\x)}) --
+    plot[domain=.99*\dpsi:0]({\rvec*sin(\thetavec+\dtheta)*cos(\psivec+\x)},{\rvec*sin(\thetavec+\dtheta)*sin(\psivec+\x)},{\rvec*cos(\thetavec+\dtheta)}) --
+    plot[domain=.99*\dtheta:0]({\rvec*sin(\thetavec+\x)*cos(\psivec)},{\rvec*sin(\thetavec+\x)*sin(\psivec)},{\rvec*cos(\thetavec+\x)}) --
+    cycle;
+    
+  % MEASURES;
+  \draw[<->,proj,thin]
+    plot[domain=0:\dpsi]({\rvec*sin(\thetavec+1.11*\dtheta)*cos(\psivec+\x)},{\rvec*sin(\thetavec+1.11*\dtheta)*sin(\psivec+\x)},{\rvec*cos(\thetavec+1.11*\dtheta)})
+    node[right=12,below] {\contour{white}{$r\sin\theta\dd{\psi}$}};
+  \draw[<->,proj,thin]
+    plot[domain=0:\dtheta]({\rvec*sin(\thetavec+\x)*cos(\psivec+1.15*\dpsi)},{\rvec*sin(\thetavec+\x)*sin(\psivec+1.15*\dpsi)},{\rvec*cos(\thetavec+\x)}) 
+    node[above=11,right=-3] {$r\dd{\theta}$};
+    
+  % ANGLES
+  \tdplotdrawarc[->]{(O)}{0.35*\rvec}{0}{\psivec}
+    {below=-2}{$\psi$}
+  \tdplotdrawarc[->]{(O)}{0.45*\rvec}{\psivec}{\psivec+\dpsi}
+    {anchor=145,inner sep=1}{\contour{white}{$\dd{\psi}$}}
+  \tdplotsetthetaplanecoords{\psivec}
+  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.36*\rvec}{0}{\thetavec}
+    {right=2,above=-1}{$\theta$}
+  \tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.54*\rvec}{\thetavec}{\thetavec+\dtheta}
+    {left=0.2,above right=-2}{\contour{white}{$\dd{\theta}$}}
+  
+\end{tikzpicture}
+}
+
+    \caption{}
+    \label{fig:elm}
+ \end{subfigure}
+
+    \caption{(a) Coordinates system,(b) discretization technique}
+\end{figure}

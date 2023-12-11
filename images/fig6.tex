@@ -1,0 +1,45 @@
+
+\begin{figure}[h]
+ 
+\centering
+\begin{tikzpicture}[>=latex, decoration={markings, mark=at position 0.5 with {\arrow{>}}}]
+    % Coordinates
+    \coordinate (earth) at (0,0);
+    \coordinate (sat) at (2,3);
+    \coordinate (A) at (-1,1);
+    \coordinate (B) at (0,-1.5);
+    \coordinate (C) at (2,3.5);
+    
+
+
+    % Earth
+    \draw[thick, fill=blue!20!white, draw=blue] (earth) circle (1);
+    % Text
+    \node (b) at (B) {Earth};
+    
+    % Moon
+    \node[circle, inner sep=1.5pt, outer sep=2pt, fill=black!30] (MOON) at (sat) {};
+    % Text 
+    \node (c) at (C) {Sat};
+    
+    % Lines
+    % \draw[-latex, postaction={decorate}] (sun) -- (earth) node[pos=.55, below left] {$\vec{V}_{1}$};
+    \draw[dashed, -latex, postaction={decorate},green,thick] (earth) -- (sat) node[pos=.60, below right] {\textcolor{green}{$\vec{V_2}$}};
+    \draw[dashed, -latex, postaction={decorate},yellow!30!blue,thick] ({cos(135)},{sin(135}) -- (sat) node[pos=.4, above left] {\textcolor{yellow!30!blue}{$\vec{V}_{sat/elm}$}}; 
+    \draw[dashed, -latex, postaction={decorate},yellow!50!red,thick] (0,0) --  ({cos(135)},{sin(135}) node[pos=.5,  left] {\textcolor{yellow!50!red}{$\vec{V}_{elm}$}}; 
+
+    % Point
+    \draw[fill=yellow!10!red, draw=yellow!10!red] ({cos(135)},{sin(135}) circle (2pt) node[left, shift={(-0.,0)}] {\textcolor{yellow!10!red}{$\mathrm{element}$}};
+    % Point
+    \draw[fill=yellow!50!red] (sun) circle (1pt) node[below, shift={(0,-0.1)}] {$\mathrm{O}$};
+
+    % X and Y axes
+    \draw[-latex] (-1,0) -- (4,0) node[below right] {$x$};
+    \draw[-latex] (0,-1) -- (0,3) node[above left] {$y$};
+    % i and j axes
+    \draw[-latex] (0,0) -- (1,0) node[below right] {$i$};
+    \draw[-latex] (0,0) -- (0,1) node[above left] {$j$};
+\end{tikzpicture}
+\caption{Satellite Position Relative to Earth Surface Elements}
+\label{fig:}
+\end{figure}

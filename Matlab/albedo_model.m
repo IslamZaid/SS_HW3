@@ -1,11 +1,7 @@
 %% 2- Planetary Albedo Model
-% function [Q_A,I,Q ] = albedo_model(Normal_Vectors, centerNodes,A_sat, R_ear_sun,R_sat_ear)
-function [Q_A,I,Q ] = albedo_model(Normal_Vectors,centerNodes3,A_sat, R_ear_sun,R_sat_ear,area_sat)
-    a = 0.39;      % fraction of solar radiation reflected from earth. the average varies from 0.31 to 0.39 
-    Ps = 3.856*10^26;
+function [Q_A,I,Q ] = albedo_model(Normal_Vectors,centerNodes3,A_sat, R_ear_sun,R_sat_ear,area_sat,Ps, a)
     % find the elements that see the sun and the radiant power emitted by sun per unit projected area
-%     n_nodes = size(centerNodes,1);
-    n_nodes = size(centerNodes3,1);
+     n_nodes = size(centerNodes3,1);
     I = zeros(n_nodes);
     for i = 1 : n_nodes-1
         for j = 1 : n_nodes-1   % in y

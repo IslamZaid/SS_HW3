@@ -16,21 +16,22 @@ h = sqrt( mu * a_SMA * (1-e^2) ) ;   % kg.m^2/s
 alpha = 0.12;       % absorptance
 eps = 0.5;          % Emmitance 
 ae = alpha/eps;     % (alpha/eps)
-r_sat_ear = 6.371e+6 + 2e+6;   % Satellite distance to the center of the earth (m)
-area_sat = 100;     % Satelite Area (m^2)
 
 
 % Earth data
-epslon_p = 1;       % Earth emmisivity 
-sigma = 5.67e-8;    % boltz man constant
+epslon_p = 1; % 
+sigma = 5.67e-8;
 T_p = 254;          % Earth temperature (K)    
 r_ear = 6.371e+6;   % Earth radius (m)
-a = 0.39;           % fraction of solar radiation reflected from earth. the average varies from 0.31 to 0.39 
+r_sat_ear = 6.371e+6 + 2e+6;    
+a = 0.39;      % fraction of solar radiation reflected from earth. the average varies from 0.31 to 0.39 
 
 % Sun data 
-Ps = 3.856*10^26;   % Total emmited power from the sun (w) 
+Ps = 3.856*10^26;    % (w) 
 
 
+b_ear_sun = pi/2;
+area_sat = 100;   %(m^2)
 
 
 
@@ -111,17 +112,13 @@ Q_mat = zeros(numsteps,numNodes+1,numNodes);        % earth surface elements con
 Q_p_mat = zeros(numsteps,1);                        % planetary radiation to satellite(w)
 Q_A_mat = zeros(numsteps,1);                        % Total Albedo radiation to satellite(w)
 Q_sun_mat = zeros(numsteps,1);                      % Sun direct radiation to satellite (w)
-r_EarToSun = zeros(numsteps,1);                     % earth to sun distance (m)
-Temp = zeros(numsteps,1);                           % Satellite temperature (K)
-theta_earth_mat = zeros(numsteps,1);                % angular position of the earth around the sum  (rad)
-theta_sat_mat = zeros(numsteps,1);                  % angular position of the satellite around the earth (rad)
 
 % loop through time steps
 parfor step = 1:   1000 %numsteps
     t = time_steps(step);
     M = n_earth*(t); % mean anomaly
     b_ear_sun  = M+(2*e-0.25*e^3)*sin(M)+(5/4)*e^2*sin(2*M)+(13/12)*e^3*sin(3*M); % the angular posion of the earth wrt sun (rad)
-    r = (h^2/mu)/(1+e*cos(b_ear_sun));              % earth to sun distance (m)
+    r = (h^2/mu)/(1+e*cos(theta));                  % earth to sun distance (m)
     r_EarToSun(step) = r;                           % list of earth to sun distance (m)
     b_sat_ear = 2*pi*t / peiod_sat;                 % the angular posion of the satellte wrt earth (rad)
 
@@ -129,7 +126,7 @@ parfor step = 1:   1000 %numsteps
     Q_sun = sun_model(r,r_ear,R_ear_sun(r,b_ear_sun),R_sat_sun(r,b_ear_sun, b_sat_ear), A_sat(b_ear_sun),Ps);
     
     %2- Planetary Albedo Model
-    [Q_A,I,Q ]  = albedo_model(Normal_Vectors,centerNodes,A_sat(b_sat_ear), R_ear_sun(r,b_ear_sun),R_sat_ear(b_sat_ear),area_sat,Ps, a);
+    [Q_A,I,Q ]  = albedo_model(Normal_Vectors,centerNodes,A_sat(b_sat_ear), R_ear_sun(r,b_ear_sun),R_sat_ear(b_sat_ear),area_sat,Ps);
     
     % 3- Earth Model
     Q_p = earth_model(sigma,epslon_p,T_p,r_ear,r_sat_ear);
@@ -141,7 +138,7 @@ parfor step = 1:   1000 %numsteps
     Q_sun_mat(step) = Q_sun ;
     Q_A_mat(step) = Q_A ;
 
-    theta_earth_mat(step) = b_ear_sun;
+    theta_earth_mat(step) = theta;
     theta_sat_mat(step) = b_sat_ear;
 
     I_mat(step,:,:) = I; 

@@ -454,25 +454,8 @@ The satellite collects albedo radiation, which is a portion of the incident sola
 \paragraph{Radiation types and temperature variation w.r.t time,}
 Figure \ref{fig:temptime1} shows the \textit{temperature} variation over \SI{24}{\hour} period time with a scope of the behavior over around \SI{2.12}{\hour} time (satellite periodic time). The satellite temperature varies according to the time periodically and oscillates between a minimum value of \textcolor{red}{X} and a maximum value of Y. The three radiation modes are shown in Figure \ref{fig:QQQtimme1}; \textit{Albedo and direct sun radiations}  are coherently oscillating according to the angular position of the satellite with respect to the earth and the sun. It's clear that the direct sun radiation developed a higher absorbed amount of power, while the reflected radiation from the earth contributes with a lower value with respect to the sun contributions which can be quantified as two-thirds of the sun contribution. Also, the figure depicts how much small is the contribution from the earth infra red radiation relative to the other two types. Furthermore, the earth does not depend on the position where it provides a constant value. Figure \ref{fig:Qtimme1} shows the total absorbed power by the satellite of \SI{2.5e5}{\watt} during the time where the satellite is not in eclipse, while it tends to zero in eclipse condition. The previous case was performed for a satellite with \textit{white color paint (silicone)}. The emissivity ($\varepsilon$) and absorptivity ($\alpha$) of this paint are shown in Table \ref{tb:01}. \\
 
-Another case study was performed with different surface properties of the satellite where the silicate was used as white paint with the properties that are shown in Table \ref{tb:01}. Similar results to the first case were generated and found out that the all the minimum values did not change where the satellite in eclipse. On the other hand, the maximum value of temperature declined from just below \SI{300}{\kelvin} to around \SI{250}{\kelvin}. Additionally, The incident radiation values were same since no change happened to the earth or the sun. \\
-
-\begin{table}[H]
-    \centering
-    \caption{Satellite surface paints coefficients}
-    \begin{tabular}{c |c c c}
-    \hline
-        Coefficient & $\alpha$ & $\varepsilon$ & $\ae$ \\ \hline
-        Silicone &  0.26 & 0.83 & 0.313 \\
-         Silicate & 0.40&0.60 & 0.667  \\ \hline
-    \end{tabular}
-    \label{tb:01}
-\end{table}
-
-It is evident from the results that the albedo and direct sun radiation are related to the eclipse phenomenon. While the direct sun radiation is represented as a step output according to the used mathematical approach and the sun \ac{FOV}, the albedo radiation has smooth changes at the boundaries of the eclipse region where the view factor combinations between earth-sun and earth-satellite are parameters for such phenomenon. The sharp changes of the temperature in this study during the satellite cycles are justified because the code does not consider thermal energy storage w.r.t time. It is expected to have smooth changes in the temperatures when the thermal properties of the used material in the satellite's internal structures are taken into consideration.
 
 
-
- 
 
 \begin{figure}[H]
     \centering
@@ -493,6 +476,28 @@ It is evident from the results that the albedo and direct sun radiation are rela
     \end{subfigure}
     \caption{(a) Temperature variation, (b) radiation power variation, and (c) Total incident radiation power to the satellite over time of white paint (silicone) case, $\alpha=0.26, \varepsilon = 0.83$}
 \end{figure}
+
+
+\begin{table}[H]
+    \centering
+    \caption{Satellite surface paints coefficients}
+    \begin{tabular}{c |c c c}
+    \hline
+        Coefficient & $\alpha$ & $\varepsilon$ & $\ae$ \\ \hline
+        Silicone &  0.26 & 0.83 & 0.313 \\
+         Silicate & 0.40&0.60 & 0.667  \\ \hline
+    \end{tabular}
+    \label{tb:01}
+\end{table}
+
+
+
+Another case study was performed with different surface properties of the satellite where the silicate was used as white paint with the properties that are shown in Table \ref{tb:01}. Similar results to the first case were generated and found out that the all the minimum values did not change where the satellite in eclipse. On the other hand, the maximum value of temperature declined from just below \SI{300}{\kelvin} to around \SI{250}{\kelvin}. Additionally, The incident radiation values were same since no change happened to the earth or the sun. \\
+
+It is evident from the results that the albedo and direct sun radiation are related to the eclipse phenomenon. While the direct sun radiation is represented as a step output according to the used mathematical approach and the sun \ac{FOV}, the albedo radiation has smooth changes at the boundaries of the eclipse region where the view factor combinations between earth-sun and earth-satellite are parameters for such phenomenon. The sharp changes of the temperature in this study during the satellite cycles are justified because the code does not consider thermal energy storage w.r.t time. It is expected to have smooth changes in the temperatures when the thermal properties of the used material in the satellite's internal structures are taken into consideration.
+
+ 
+
 
 \begin{figure}[H]
     \centering

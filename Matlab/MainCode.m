@@ -284,7 +284,7 @@ exportgraphics(f,[path_img,'/inc_sun_rad.png'], Resolution=1200);
 
 %%
  
-f=figure('Position', [0, 0, 1500, 450]);  %'Position', [0, 0, 1500, 1200],
+f=figure('Position', [0, 0, 1800, 600]);  %'Position', [0, 0, 1500, 1200],
 subplot(1,3,[1,2])
 plot(Temp(1:60*24), 'LineWidth',2)
 grid on 
@@ -311,7 +311,7 @@ fontsize(gcf,16,"points")
 exportgraphics(f,[path_img,'/temp_time.png'], Resolution=1200);
 %%
  
-f=figure('Position', [0, 0, 1500, 450]);  %'Position', [0, 0, 1500, 1200],
+f=figure('Position', [0, 0, 1800, 600]);  %'Position', [0, 0, 1500, 1200],
 subplot(1,3,[1,2])
 plot(Q_A_mat(1:60*24), 'LineWidth',2)
 hold on
@@ -333,7 +333,7 @@ plot(Q_sun_mat(1:period_sat/60), 'LineWidth',2)
 plot(Q_p_mat(1:period_sat/60), 'LineWidth',2)
 title("Radiation - one cycle")
 xlabel("Time (hours)")
-xticks(0:0.5*60:60*24/60)
+xticks(0:0.5*60:60*2 )
 xticklabels(0:0.5:2)
 grid on 
 grid minor 
@@ -344,7 +344,7 @@ exportgraphics(f,[path_img,'/QQQ_time.png'], Resolution=1200);
 
 %%
  Q_tot = Q_A_mat+Q_sun_mat+Q_p_mat;
-f=figure('Position', [0, 0, 1500, 450]);  %'Position', [0, 0, 1500, 1200],
+f=figure('Position', [0, 0, 1800, 600]);  %'Position', [0, 0, 1500, 1200],
 subplot(1,3,[1,2])
 plot(Q_tot(1:60*24), 'LineWidth',2)
 grid on 

@@ -14,7 +14,7 @@ h = sqrt( mu * a_SMA * (1-e^2) ) ;   % kg.m^2/s
 
 % Satellite data
 alpha = 0.12;       % absorptance
-eps = 0.5;          % Emmitance 
+eps = 0.90;          % Emmitance 
 ae = alpha/eps;     % (alpha/eps)
 r_sat_ear = 6.371e+6 + 2e+6;   % Satellite distance to the center of the earth (m)
 area_sat = 100;     % Satelite Area (m^2)
@@ -43,10 +43,21 @@ numNodes = 40;
 totaltime = 3.154e7; % Total simulation time (1 year in s)
 time_steps = 0 :60 : totaltime ;
 numsteps=length(time_steps);
+
+
+%  paths
+% path_img = 'images/WhitePaint_silicone' ;         % alpha = 0.26 , esp = 0.83
+% path_img = 'images/WhitePaint_silicone_1000h' ;  % alpha = 0.29 , esp = 0.83
+path_img = 'images/WhitePaint_silicate' ;        % alpha = 0.12 , esp = 0.90       
+% path_img = 'images/WhitePaint_silicate_1000h' ;  % alpha = 0.14 , esp = 0.90         
+% path_img = 'images/Aluminized_kapton' ;          % alpha = 0.40 , esp = 0.63         
+if ~exist(path_img, 'dir')           
+   mkdir(path_img)
+end
 %% Sphere Model Development
 % Number of nodes
 st = 0;
-[X,Y,Z] = sphere(numNodes);
+[X,Y,Z] = sphere(numNodes);     % discretize the domain into sherical domain 
 X = r_ear * X;
 Y = r_ear * Y;
 Z = r_ear * Z;
@@ -67,7 +78,7 @@ for i = 1 : numNodes
         V2 = node3 - node1;
         V3 = node4 - node1;
 
-        Area(i,j) = 0.5 * ( norm(cross(V1,V2)) + norm(cross(V2,V3)) );
+        Area(i,j) = 0.5 * ( norm(cross(V1,V2)) + norm(cross(V2,V3)) );   % calculate the area of each element by dividing into two triangles
 
         % Save center node information
         centerNodes(i, j, :) = [  (X(i, j) + X(i, j+1) + X(i+1, j) + X(i+1, j+1)) / 4;
@@ -117,7 +128,7 @@ theta_earth_mat = zeros(numsteps,1);                % angular position of the ea
 theta_sat_mat = zeros(numsteps,1);                  % angular position of the satellite around the earth (rad)
 
 % loop through time steps
-parfor step = 1:   1000 %numsteps
+parfor step = 1: numsteps
     t = time_steps(step);
     M = n_earth*(t); % mean anomaly
     b_ear_sun  = M+(2*e-0.25*e^3)*sin(M)+(5/4)*e^2*sin(2*M)+(13/12)*e^3*sin(3*M); % the angular posion of the earth wrt sun (rad)
@@ -155,13 +166,13 @@ end
 
 
 %% plotting
-cond = 0;
+cond = 1;
 if cond == 1 
 
 if size(Q_mat,2) ~= size(Q_mat,3)
     Q_mat(:,:,end+1) = Q_mat(:,:,end);
 end
-k = 80 %
+k = 80; %
 f=figure();  %'Position', [0, 0, 1500, 1200],
 r_eartosun = a_SMA;
 f_sun = 1e+3;
@@ -198,7 +209,7 @@ hold off
 c=colorbar;
 c.LineWidth =2 ;
 c.FontSize = 16 ;
-caxis([0 max(max(max(Q_mat)))]);
+clim([0 max(max(max(Q_mat)))]);
 
 xlim([-1e7 8e7])
 ylim([-1e7 2e7])
@@ -213,7 +224,7 @@ view(-20, 45)
 axis equal
 
 %f.FontSize = 16;
-exportgraphics(f,'images/albedo_elements.png', Resolution=1200);
+exportgraphics(f,[path_img,'/albedo_elements.png'], Resolution=1200);
 
 %%
 
@@ -221,7 +232,7 @@ exportgraphics(f,'images/albedo_elements.png', Resolution=1200);
 if size(Q_mat,2) ~= size(Q_mat,3)
     Q_mat(:,:,end+1) = Q_mat(:,:,end);
 end
-k = 80 %
+k = 80 ; %
 f=figure();  %'Position', [0, 0, 1500, 1200],
 r_eartosun = a_SMA;
 f_sun = 1e+3;
@@ -258,7 +269,7 @@ hold off
 c=colorbar;
 c.LineWidth =2 ;
 c.FontSize = 16 ;
-caxis([0 max(max(max(I_mat)))]);
+clim([0 max(max(max(I_mat)))]);
 
 xlim([-1e7 8e7])
 ylim([-1e7 2e7])
@@ -273,7 +284,7 @@ view(-20, 45)
 axis equal
 
 %f.FontSize = 16;
-exportgraphics(f,'images/inc_sun_rad.png', Resolution=1200);
+exportgraphics(f,[path_img,'/inc_sun_rad.png'], Resolution=1200);
 
 %%
  
@@ -288,7 +299,7 @@ ylabel("Temperature (K)")
 xticks(0:6*60:24*60)
 xticklabels(0:6:24) 
  subplot(1,3,3) 
-plot(Temp(0*60+1:60*2+1), 'LineWidth',2)
+plot(Temp(1 : peiod_sat/60), 'LineWidth',2)
 title("Temperature - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:2*60)
@@ -298,7 +309,7 @@ grid minor
 fontsize(gcf,16,"points")
 
 
-exportgraphics(f,'images/temp_time.png', Resolution=1200);
+exportgraphics(f,[path_img,'/temp_time.png'], Resolution=1200);
 %%
  
 f=figure('Position', [0, 0, 1500, 450]);  %'Position', [0, 0, 1500, 1200],
@@ -317,19 +328,19 @@ xticks(0:6*60:24*60)
 xticklabels(0:6:24)  
 
 subplot(1,3,3) 
-plot(Q_A_mat(0*60+1:60*2+1), 'LineWidth',2)
+plot(Q_A_mat( 1:60*24), 'LineWidth',2)
 hold on
-plot(Q_sun_mat(0*60+1:60*2+1), 'LineWidth',2)
-plot(Q_p_mat(0*60+1:60*2+1), 'LineWidth',2)
+plot(Q_sun_mat(1:60*24), 'LineWidth',2)
+plot(Q_p_mat(1:60*24), 'LineWidth',2)
 title("Radiation - one cycle")
 xlabel("Time (hours)")
-xticks(0:0.5*60:2*60)
+xticks(0:0.5*60:60*24/60)
 xticklabels(0:0.5:2)
 grid on 
 grid minor 
 fontsize(gcf,16,"points")
 
-exportgraphics(f,'images/QQQ_time.png', Resolution=1200);
+exportgraphics(f,[path_img,'/QQQ_time.png'], Resolution=1200);
 
 
 %%
@@ -345,7 +356,7 @@ ylabel("Radiation power (w)")
 xticks(0:6*60:24*60)
 xticklabels(0:6:24) 
  subplot(1,3,3) 
-plot(Q_tot(0*60+1:60*2+1), 'LineWidth',2)
+plot(Q_tot(1:peiod_sat  ), 'LineWidth',2)
 title("Total radiation - one cycle")
 xlabel("Time (hours)")
 xticks(0:0.5*60:2*60)
@@ -355,7 +366,7 @@ grid minor
 fontsize(gcf,16,"points")
 
 
-exportgraphics(f,'images/Q_time.png', Resolution=1200);
+exportgraphics(f,[path_img,'/Q_time.png'], Resolution=1200);
 
 
 
@@ -366,6 +377,8 @@ exportgraphics(f,'images/Q_time.png', Resolution=1200);
 
 
 %% Initialize gif
+ccond = 0;
+if ccond == 1
 if size(Q_mat,2) ~= size(Q_mat,3)
     Q_mat(:,:,end+1) = Q_mat(:,:,end);
 end
@@ -408,14 +421,14 @@ for k = timeloop
     c=colorbar;
     c.LineWidth =2 ;
     c.FontSize = 16 ;
-    caxis([0 max(max(max(Q_mat)))]);
+    clim([0 max(max(max(Q_mat)))]);
  
     xlim([-1e7 8e7])
     ylim([-1e7 2e7])
     zlim([-2e7 1e7])
 
 %     f.FontSize = 16;
-    exportgraphics(f,'images/Animate_sat.gif', 'Resolution', 1200,  'BackgroundColor', 'none','Append',true);
+    exportgraphics(f,[path_img,'/Animate_sat.gif'], 'Resolution', 1200,  'BackgroundColor', 'none','Append',true);
 
     k
 end
@@ -434,7 +447,7 @@ for i = timeloop
     xlabel("Time (hours)")
     ylabel("Distance between sun and earth (m)")
     
-    exportgraphics(f,'images/temp.gif','Append',true);
+    exportgraphics(f,[path_img,'/temp.gif'],'Append',true);
 end
 
 
@@ -485,14 +498,14 @@ for k = timeloop
     c=colorbar;
     c.LineWidth =2 ;
     c.FontSize = 16 ;
-    caxis([0 max(max(max(Q_mat)))]);
+    clim([0 max(max(max(Q_mat)))]);
  
     xlim([-8e7 8e7])
     ylim([-8e7 8e7])
     zlim([-2e7 1e7])
 
 %     f.FontSize = 16;
-    exportgraphics(f,'images/Animate_year.gif','Append',true);
+    exportgraphics(f,[path_img,'/Animate_year.gif'],'Append',true);
 
     k
 end
@@ -513,9 +526,9 @@ for i = 1 :1000: numsteps
     xlabel("Time (years)")
     ylabel("Distance between sun and earth (m)")
     
-    exportgraphics(f,'images/r_earth.gif','Append',true);
+    exportgraphics(f,[path_img,'/r_earth.gif'],'Append',true);
 end
 
-
+end
 end
 

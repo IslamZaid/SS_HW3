@@ -109,9 +109,22 @@
 
 
 \section{Introduction} 
-\indent In this report, a thermal model was made on MATLAB to analyze the thermal effects of solar radiation, albedo radiation, and planetary radiation on a satellite. The satellite was modeled to be in LEO orbit, with an altitude of 2000km. The orbit of the satellite is perfectly circular, has an eccentricity (e) of 0, and has an orbital period of 128 min. The velocity of the satellite in orbit is 6.88 km/s, and the satellite is modeled as a disc with a surface area of 100 m2 on each side of the disc. The material of the satellite was decided based on the results of multiple materials to assess which material would allow the satellite to have the most ideal temperature.
+% \indent In this report, a thermal model was made on MATLAB to analyze the thermal effects of solar radiation, albedo radiation, and planetary radiation on a satellite. The satellite was modeled to be in LEO orbit, with an altitude of 2000km. The orbit of the satellite is perfectly circular, has an eccentricity (e) of 0, and has an orbital period of 128 min. The velocity of the satellite in orbit is 6.88 km/s, and the satellite is modeled as a disc with a surface area of 100 m2 on each side of the disc. The material of the satellite was decided based on the results of multiple materials to assess which material would allow the satellite to have the most ideal temperature.
 
-\indent The main objective of this assignment was to measure and plot the temperature variation of the satellite while it was in orbit around the Earth for a whole year. While taking into consideration different environmental elements and instances, such as reflection of radiation off the surface of the Earth and onto the satellite, and ellipses the satellite will encounter during the simulation period.
+% \indent The main objective of this assignment was to measure and plot the temperature variation of the satellite while it was in orbit around the Earth for a whole year. While taking into consideration different environmental elements and instances, such as reflection of radiation off the surface of the Earth and onto the satellite, and ellipses the satellite will encounter during the simulation period.
+
+\indent Space exploration has witnessed unprecedented advancements in recent decades, propelling humanity into a new era of technological achievement and scientific discovery. Satellites, serving as the backbone of our interconnected world, play a pivotal role in communications, navigation, weather monitoring, and scientific research. As we continue to push the boundaries of our exploration, it becomes imperative to develop a comprehensive understanding of the complex thermal dynamics that satellites experience in their orbital environments.
+
+
+\indent The satellite in focus resides in a Low Earth Orbit (LEO) at an altitude of 2000 kilometers, traversing the celestial canvas with an orbital period of 128 minutes. The mathematical models employed herein scrutinize the interplay between the satellite, Earth, and the Sun, considering factors such as solar radiation, albedo radiation, and planetary radiation. This intricate dance of energy exchanges unfolds in a dynamic celestial choreography, creating a rich tapestry of thermal variations that this report endeavors to unravel.
+
+\indent The primary objective of this endeavor is to construct a robust thermal model using MATLAB, unraveling the thermal effects of solar radiation, albedo radiation, and planetary radiation on the satellite. The simulation encapsulates a myriad of parameters, including the eccentricity of the satellite's orbit, its velocity, and the reflective properties of its surface materials. Such meticulous attention to detail aims not only to simulate the satellite's temperature variation over the course of a year but also to scrutinize the impact of different surface materials on its thermal equilibrium.
+
+\indent In the quest for optimal performance and longevity of satellites, the selection of materials assumes paramount importance. To this end, a comparative analysis of diverse materials is conducted, each vying to offer the satellite an ideal thermal profile. This analysis, couched in the language of physics and engineering, enables the identification of materials that strike the delicate balance between absorption and emission, ensuring the satellite's resilience in the harsh space environment.
+
+
+
+
 
 
 \section{Methodology}   
@@ -181,7 +194,7 @@ By substitution from Equation \ref{eq:11} into Equation \ref{eq:7},
 \begin{equation}\label{eq:04}
     [R(\phi, \theta, \psi)] = [eye] [ eye] [R_z(\psi_1(t))]
 \end{equation}
-\begin{equation}\label{eq:04}
+\begin{equation}\label{eq:04a}
     [R(\psi)] = [R_z(\psi_1(t))]
 \end{equation}
 
@@ -293,7 +306,7 @@ The periodic time ($\tau$),
 
 
 \subsection{Thermal Models}
-\paragraph{Solar radiation,} The Sun is emitting a constant amount of radiation power ($P$) equal \SI{3.856e26}{\watt}. The solar radiation flux of a point at a distance ($d$) from the center of the earth could be calculated according to Equation \ref{eq:solarflux}.
+\paragraph{Solar radiation,} The Sun is emitting a constant amount of radiation power ($P$) equal \SI{3.856e26}{\watt}. This power is intercepted by any object in the space around the sun as shown in Figure \ref{fig:modes} The solar radiation flux at a point of a distance ($d$) from the center of the earth could be calculated according to Equation \ref{eq:solarflux}.
 
 \begin{equation} \label{eq:solarflux}
     J_s = \frac{Ps}{4\pi d^2}
@@ -303,7 +316,7 @@ The periodic time ($\tau$),
 
 
 
-The relative motion between the three components—the sun, earth, and satellite—provides the possibility of eclipse conditions, in which the satellite will be outside the visible region of the sun. Consequently, the direct solar radiation will not arrive at the satellite. This case can be captured in the simulation by defining a certain condition that can determine whether the satellite is in an eclipse quantitatively. Equation \ref{eq:psi13} provides the proposed mathematical concept, which is calculated each time step to determine if there is a direct contribution from the sun radiation. Simply stated, does the satellite pass through the field of view \ac{FOV} of the sun?
+The relative motion between the three components—the sun, earth, and satellite—provides the possibility of eclipse conditions, in which the satellite will be outside the visible region of the sun. Consequently, the direct solar radiation will not arrive at the satellite. This case can be captured in the simulation by defining a certain condition that can determine whether the satellite is in an eclipse quantitatively as shown in Figure \ref{fig:minangle}. Equation \ref{eq:psi13} provides the proposed mathematical concept, which is calculated each time step to determine if there is a direct contribution from the sun radiation. Simply stated, does the satellite pass through the field of view \ac{FOV} of the sun?
 
 
 \input{images/fig5}
@@ -319,7 +332,7 @@ The portion of solar radiation that bounces off a planet's surface and/or atmosp
     \delta Q_{r_{ij}} = I_{i0} dA_i\cos{\phi_i}\times\frac{dA_j \cos{\phi_j}}{d^2}
 \end{equation}
 
-Each place on the Earth's surface has different geometrical relationships with respect to the sun and satellite. Thus, it's mandatory to discretize the Earth into a mesh grid to be able to numerically integrate over the Earth's surface to compute the total absorbed radiation by the albedo radiation. The following algorithm is developed to compute the incident radiation from each element on the Earth's surface to the satellite and sum all the Earth's contributions to get the total albedo radiation as described in Algorithm \ref{alg:01}.
+Each place on the Earth's surface has different geometrical relationships with respect to the sun and satellite as shown in Figure \ref{fig:elmsat}. Thus, it's mandatory to discretize the Earth into a mesh grid to be able to numerically integrate over the Earth's surface to compute the total absorbed radiation by the albedo radiation. The following algorithm is developed to compute the incident radiation from each element on the Earth's surface to the satellite and sum all the Earth's contributions to get the total albedo radiation as described in Algorithm \ref{alg:01}.
 
 
 
@@ -441,25 +454,8 @@ The satellite collects albedo radiation, which is a portion of the incident sola
 \paragraph{Radiation types and temperature variation w.r.t time,}
 Figure \ref{fig:temptime1} shows the \textit{temperature} variation over \SI{24}{\hour} period time with a scope of the behavior over around \SI{2.12}{\hour} time (satellite periodic time). The satellite temperature varies according to the time periodically and oscillates between a minimum value of \textcolor{red}{X} and a maximum value of Y. The three radiation modes are shown in Figure \ref{fig:QQQtimme1}; \textit{Albedo and direct sun radiations}  are coherently oscillating according to the angular position of the satellite with respect to the earth and the sun. It's clear that the direct sun radiation developed a higher absorbed amount of power, while the reflected radiation from the earth contributes with a lower value with respect to the sun contributions which can be quantified as two-thirds of the sun contribution. Also, the figure depicts how much small is the contribution from the earth infra red radiation relative to the other two types. Furthermore, the earth does not depend on the position where it provides a constant value. Figure \ref{fig:Qtimme1} shows the total absorbed power by the satellite of \SI{2.5e5}{\watt} during the time where the satellite is not in eclipse, while it tends to zero in eclipse condition. The previous case was performed for a satellite with \textit{white color paint (silicone)}. The emissivity ($\varepsilon$) and absorptivity ($\alpha$) of this paint are shown in Table \ref{tb:01}. \\
 
-Another case study was performed with different surface properties of the satellite where the silicate was used as white paint with the properties that are shown in Table \ref{tb:01}. Similar results to the first case were generated and found out that the all the minimum values did not change where the satellite in eclipse. On the other hand, the maximum value of temperature declined from just below \SI{300}{\kelvin} to around \SI{250}{\kelvin}. Additionally, The incident radiation values were same since no change happened to the earth or the sun. \\
-
-\begin{table}[H]
-    \centering
-    \caption{Satellite surface paints coefficients}
-    \begin{tabular}{c |c c c}
-    \hline
-        Coefficient & $\alpha$ & $\varepsilon$ & $\ae$ \\ \hline
-        Silicone &  0.26 & 0.83 & 0.313 \\
-         Silicate & 0.40&0.60 & 0.667  \\ \hline
-    \end{tabular}
-    \label{tb:01}
-\end{table}
-
-It is evident from the results that the albedo and direct sun radiation are related to the eclipse phenomenon. While the direct sun radiation is represented as a step output according to the used mathematical approach and the sun \ac{FOV}, the albedo radiation has smooth changes at the boundaries of the eclipse region where the view factor combinations between earth-sun and earth-satellite are parameters for such phenomenon. 
 
 
-
- 
 
 \begin{figure}[H]
     \centering
@@ -480,6 +476,28 @@ It is evident from the results that the albedo and direct sun radiation are rela
     \end{subfigure}
     \caption{(a) Temperature variation, (b) radiation power variation, and (c) Total incident radiation power to the satellite over time of white paint (silicone) case, $\alpha=0.26, \varepsilon = 0.83$}
 \end{figure}
+
+
+\begin{table}[H]
+    \centering
+    \caption{Satellite surface paints coefficients}
+    \begin{tabular}{c |c c c}
+    \hline
+        Coefficient & $\alpha$ & $\varepsilon$ & $\ae$ \\ \hline
+        Silicone &  0.26 & 0.83 & 0.313 \\
+         Silicate & 0.40&0.60 & 0.667  \\ \hline
+    \end{tabular}
+    \label{tb:01}
+\end{table}
+
+
+
+Another case study was performed with different surface properties of the satellite where the silicate was used as white paint with the properties that are shown in Table \ref{tb:01}. Similar results to the first case were generated and found out that the all the minimum values did not change where the satellite in eclipse. On the other hand, the maximum value of temperature declined from just below \SI{300}{\kelvin} to around \SI{250}{\kelvin}. Additionally, The incident radiation values were same since no change happened to the earth or the sun. \\
+
+It is evident from the results that the albedo and direct sun radiation are related to the eclipse phenomenon. While the direct sun radiation is represented as a step output according to the used mathematical approach and the sun \ac{FOV}, the albedo radiation has smooth changes at the boundaries of the eclipse region where the view factor combinations between earth-sun and earth-satellite are parameters for such phenomenon. The sharp changes of the temperature in this study during the satellite cycles are justified because the code does not consider thermal energy storage w.r.t time. It is expected to have smooth changes in the temperatures when the thermal properties of the used material in the satellite's internal structures are taken into consideration.
+
+ 
+
 
 \begin{figure}[H]
     \centering
@@ -523,7 +541,7 @@ FOR EACH MATERIAL (EXCEPT ANIMATIONS)
 
 \newpage
 \section{Discussion} %MSF&IZ
-\indent The aforementioned results provide confirmation for the hypothesis that the power assimilated by the satellite diminishes throughout eclipse phases. This phenomenon occurs because albedo and solar radiation are absent during eclipse phases. According to the simulations (refer to figure \ref{fig:temptime}), the satellite completes one revolution around the Earth every 128 minutes, with an eclipse occurring for half of each period. The previously mentioned variation induces a recurring pattern of fluctuations in the overall incident radiation reaching the satellite. This ultimately leads to the recurrence of the effect cycle on the satellite's temperature. As a result of this variation, the satellite constantly oscillates within the temperature range of 205 to 290K. While the temperature range mentioned may not be optimal, it is worth noting that the typical temperature variation for a satellite in Low Earth Orbit (LEO) is between -150 and 60 degrees Celsius \cite{iles2004photovoltaic}. Consequently, this report's results and methodology are validated.
+\indent The aforementioned results provide confirmation for the hypothesis that the power assimilated by the satellite diminishes throughout eclipse phases. This phenomenon occurs because albedo and solar radiation are absent during eclipse phases. According to the simulations (refer to figure \ref{fig:temptime1}), the satellite completes one revolution around the Earth every 128 minutes, with an eclipse occurring for half of each period. The previously mentioned variation induces a recurring pattern of fluctuations in the overall incident radiation reaching the satellite. This ultimately leads to the recurrence of the effect cycle on the satellite's temperature. As a result of this variation, the satellite constantly oscillates within the temperature range of 205 to 290K. While the temperature range mentioned may not be optimal, it is worth noting that the typical temperature variation for a satellite in Low Earth Orbit (LEO) is between -150 and 60 degrees Celsius \cite{iles2004photovoltaic}. Consequently, this report's results and methodology are validated.
 
 \indent The simulation was executed using different value of $\frac{\alpha}{\epsilon}$, to analyse the effect of different materials on the temperature. It was found that 
 

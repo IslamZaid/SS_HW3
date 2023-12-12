@@ -27,6 +27,7 @@ This repository contains a numerical code for computing the radiative power abso
 This code is developed mainly using MATLAB. 
 ## Contributors
 Islam Mohamed Zaid, and Mohamed Sherif
+Supervision: Dr. Elena Fantino
 ## License
 CC-BY-4.0
 Feel free to reach out for any questions or issues. Happy coding!

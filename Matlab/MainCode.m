@@ -381,7 +381,7 @@ if ccond == 1
 if size(Q_mat,2) ~= size(Q_mat,3)
     Q_mat(:,:,end+1) = Q_mat(:,:,end);
 end
-timeloop = 1:120 ;
+timeloop = 1:128 ;
 
 for k = timeloop
     f=figure('visible','off');  %'Position', [0, 0, 1500, 1200],

@@ -26,7 +26,6 @@ Ps = 3.856*10^26;   % Total emmited power from the sun (w)
 
 
 % Earth data
-epslon_p = 1;       % Earth emmisivity 
 sigma = 5.67e-8;    % boltz man constant
 T_p = 254;          % Earth temperature (K)    
 r_ear = 6.371e+6;   % Earth radius (m)
